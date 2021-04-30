@@ -8,8 +8,8 @@ class Plate extends Group {
 
         this.name = 'plate';
 
-        const image = require('../../scenes/plate_cropped.png');
-        console.log(image);
+        // const image = require('../../scenes/plate_cropped.png');
+        // console.log(image);
         // const map = new THREE.TextureLoader().load(image);
         const map = new THREE.TextureLoader().load( 'https://lh4.googleusercontent.com/wjNg8xx-jiOfgIxxcnmLV2lZbw5tkwbyRsZ7bIQ4cDQjlxBA0BtpEz6ZRs3Oz33eRQp-Pqc_Tvfypxw7dN3VRCVW_zJXpLKmR1THbOE' );
         const material = new THREE.SpriteMaterial( { map: map } );
@@ -36,6 +36,17 @@ class Plate extends Group {
         // main.receiveShadow = true;
         // this.add(main);
         return this;
+    }
+
+    update(timeStamp, stepSize, width) {
+        console.log(width / 2);
+        if (this.children[0].position.x >= width / 3) {
+            this.children[0].position.set(-width / 3, this.children[0].position.y, this.children[0].position.z);
+        }
+        else {
+            this.children[0].position.set(this.children[0].position.x + stepSize, this.children[0].position.y, this.children[0].position.z);
+        }
+        console.log(this.children[0].position.x);
     }
 }
 

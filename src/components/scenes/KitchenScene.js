@@ -1,10 +1,10 @@
 import * as Dat from 'dat.gui';
 import * as THREE from 'three';
 import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
-import { Flower, Land, Plate } from 'objects';
+import { Plate, Strawberry } from 'objects';
 import { BasicLights } from 'lights';
 
-class SeedScene extends Scene {
+class KitchenScene extends Scene {
     constructor(width, height) {
         // Call parent Scene() constructor
         super(width, height);
@@ -14,19 +14,27 @@ class SeedScene extends Scene {
             // gui: new Dat.GUI(), // Create GUI for scene
             rotationSpeed: 0,
             updateList: [],
+            draggable: []
         };
 
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
 
         // Add meshes to scene
-        const land = new Land();
-        // const flower = new Flower(this);
         const lights = new BasicLights();
-        const plate = new Plate();
-        // this.add(land, flower, lights);
+        // const plate = new Plate();
         this.add(lights);
         // this.add(plate);
+        let curr_plate = new Plate(-350, -90, undefined, width, height);
+        this.add(curr_plate);
+        this.addToUpdateList(curr_plate);
+        this.state.draggable.push(curr_plate);
+        // curr_plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
+        // scene.add(curr_plate);
+        // objects.push(curr_plate);
+        let strawberry = new Strawberry(-43, 25, undefined, width, height);
+        this.add(strawberry);
+        this.state.draggable.push(strawberry);
 
         const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
         // const planeMaterial = new THREE.MeshLambertMaterial(0x7ec022);
@@ -47,19 +55,19 @@ class SeedScene extends Scene {
         // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
     }
 
-    // addToUpdateList(object) {
-    //     this.state.updateList.push(object);
-    // }
+    addToUpdateList(object) {
+        this.state.updateList.push(object);
+    }
 
-    // update(timeStamp) {
-    //     const { rotationSpeed, updateList } = this.state;
-    //     this.rotation.y = (rotationSpeed * timeStamp) / 10000;
+    update(timeStamp, stepSize, WIDTH) {
+        // const { rotationSpeed, updateList } = this.state;
+        // this.rotation.y = (rotationSpeed * timeStamp) / 10000;
 
-    //     // Call update for each object in the updateList
-    //     for (const obj of updateList) {
-    //         obj.update(timeStamp);
-    //     }
-    // }
+        // Call update for each object in the updateList
+        for (const obj of this.state.updateList) {
+            obj.update(timeStamp, stepSize, WIDTH);
+        }
+    }
 }
 
-export default SeedScene;
+export default KitchenScene;

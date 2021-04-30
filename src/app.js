@@ -9,14 +9,16 @@
 import * as THREE from 'three';
 import { WebGLRenderer, OrthographicCamera, Vector3, Group } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
-import { SeedScene } from 'scenes';
+import { KitchenScene } from 'scenes';
 import { Plate, Strawberry } from 'objects';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
+console.log(WIDTH);
+console.log(HEIGHT);
 
 // Initialize core ThreeJS components
-const scene = new SeedScene(WIDTH, HEIGHT);
+const scene = new KitchenScene(WIDTH, HEIGHT);
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
@@ -43,32 +45,14 @@ document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
 // Set up controls
-// const controls = new OrbitControls(camera, canvas);
 let group = new Group();
 scene.add( group );
-let objects = [];
-let curr_plate = new Plate(0, -90, -250, WIDTH, HEIGHT);
-scene.add(curr_plate);
-objects.push(curr_plate);
-curr_plate = new Plate(0, -90, -150, WIDTH, HEIGHT);
-scene.add(curr_plate);
-objects.push(curr_plate);
-let strawberry = new Strawberry(0, 23, -42, WIDTH, HEIGHT);
-scene.add(strawberry);
-objects.push(strawberry);
-const controls = new DragControls(objects, camera, renderer.domElement);
-let curr_emissive;
+const controls = new DragControls(scene.state.draggable, camera, renderer.domElement);
 controls.addEventListener( 'dragstart', function ( event ) {
-    // curr_emissive = event.object.material.emissive;
-    // console.log(event.object.material.emissive);
-	// event.object.material.emissive.set( 0xcacaca );
     event.object.material.opacity = 0.6;
 } );
 
 controls.addEventListener( 'dragend', function ( event ) {
-    // console.log(event.object.material.emissive);
-    // event.object.material.emissive = curr_emissive;
-	// event.object.material.emissive.set( 0x000000 );
     event.object.material.opacity = 1;
     console.log(event.object.position.x);
     console.log(event.object.position.y);
@@ -76,6 +60,7 @@ controls.addEventListener( 'dragend', function ( event ) {
     console.log(event.object.parent.name);
 } );
 
+// const controls = new OrbitControls(camera, canvas);
 // controls.enableDamping = true;
 // controls.enablePan = false;
 // controls.minZoom = 4;
@@ -84,9 +69,13 @@ controls.addEventListener( 'dragend', function ( event ) {
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
+    if (timeStamp % 50 < 20) {
+        scene.update(timeStamp, 3, WIDTH);
+    }
     // controls.update();
     renderer.render(scene, camera);
-    scene.update && scene.update(timeStamp);
+    // scene.update && scene.update(timeStamp);
+    // scene.update(timeStamp, 0.00000000001, WIDTH);
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
