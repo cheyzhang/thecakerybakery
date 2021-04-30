@@ -53,16 +53,23 @@ objects.push(curr_plate);
 curr_plate = new Plate(0, -90, -150, WIDTH, HEIGHT);
 scene.add(curr_plate);
 objects.push(curr_plate);
-let strawberry = new Strawberry(0, -90, -100);
+let strawberry = new Strawberry(0, 23, -42, WIDTH, HEIGHT);
 scene.add(strawberry);
 objects.push(strawberry);
 const controls = new DragControls(objects, camera, renderer.domElement);
+let curr_emissive;
 controls.addEventListener( 'dragstart', function ( event ) {
-	// event.object.material.emissive.set( 0xaaaaaa );
+    // curr_emissive = event.object.material.emissive;
+    // console.log(event.object.material.emissive);
+	// event.object.material.emissive.set( 0xcacaca );
+    event.object.material.opacity = 0.6;
 } );
 
 controls.addEventListener( 'dragend', function ( event ) {
+    // console.log(event.object.material.emissive);
+    // event.object.material.emissive = curr_emissive;
 	// event.object.material.emissive.set( 0x000000 );
+    event.object.material.opacity = 1;
     console.log(event.object.position.x);
     console.log(event.object.position.y);
     console.log(event.object);

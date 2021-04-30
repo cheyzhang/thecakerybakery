@@ -2,24 +2,23 @@ import * as THREE from 'three';
 import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial } from 'three';
 
 class Strawberry extends Group {
-    constructor(x, y, z) {
+    constructor(x, y, z, width, height) {
         // Call parent Group() constructor
         super();
 
         this.name = 'strawberry';
 
-        // const plate = THREE.Group();
-        const main = new THREE.Mesh(
-            new THREE.BoxBufferGeometry(15, 15, 1),
-            // new THREE.MeshLambertMaterial(0x7ec022)
-            new THREE.MeshLambertMaterial({color: 0xffb6c1})
-        );
-        main.position.z = x;
-        main.position.y = y;
-        main.position.x = z;
-        main.castShadow = true;
-        main.receiveShadow = true;
-        this.add(main);
+        const map = new THREE.TextureLoader().load( 'https://lh6.googleusercontent.com/JOSi4KLhXjb1cCWRJDTaubvhtpyUD-OKdBYSoIqCrQphSfkIQ-JTY2T7QGS-qKIFbr4U8e-D05jdrEgsGxHVov9Lz-SGm-TPk2d1kmY' );
+        const material = new THREE.SpriteMaterial( { map: map } );
+        material.emissive = 0xaaaaaa;
+        const sprite = new THREE.Sprite( material );
+        sprite.scale.set( width * 0.06, height * 0.11, 1 );
+        sprite.position.z = 0; 
+        sprite.position.x = x; 
+        sprite.position.y = y;
+        // console.log(sprite.geometry.boundingBox);
+        // sprite.geometry.computeBoundingBox();
+        this.add( sprite );
         return this;
     }
 }
