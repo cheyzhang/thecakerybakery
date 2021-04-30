@@ -4,7 +4,7 @@ import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial, TextureLoader, Spr
 // import MODEL from './land.gltf';
 
 class Plate extends Group {
-    constructor() {
+    constructor(x, y, z) {
         // Call parent Group() constructor
         super();
 
