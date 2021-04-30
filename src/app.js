@@ -6,11 +6,10 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, OrthographicCamera, Vector3 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { WebGLRenderer, OrthographicCamera, Vector3, Group } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { SeedScene } from 'scenes';
-import { Plate } from 'objects';
+import { Plate, Strawberry } from 'objects';
 
 // Initialize core ThreeJS components
 const scene = new SeedScene(window.innerWidth, window.innerHeight);
@@ -41,24 +40,29 @@ document.body.appendChild(canvas);
 
 // Set up controls
 // const controls = new OrbitControls(camera, canvas);
+let group = new Group();
+scene.add( group );
 let objects = [];
-let curr_plate = new Plate(0, -30, -100);
+let curr_plate = new Plate(0, -90, -250);
 scene.add(curr_plate);
 objects.push(curr_plate);
-curr_plate = new Plate(0, -30, -50);
+curr_plate = new Plate(0, -90, -150);
 scene.add(curr_plate);
 objects.push(curr_plate);
+let strawberry = new Strawberry(0, -90, -100);
+scene.add(strawberry);
+objects.push(strawberry);
 const controls = new DragControls(objects, camera, renderer.domElement);
 controls.addEventListener( 'dragstart', function ( event ) {
-
 	event.object.material.emissive.set( 0xaaaaaa );
-
 } );
 
 controls.addEventListener( 'dragend', function ( event ) {
-
 	event.object.material.emissive.set( 0x000000 );
-
+    console.log(event.object.position.x);
+    console.log(event.object.position.y);
+    console.log(event.object);
+    console.log(event.object.parent.name);
 } );
 
 // controls.enableDamping = true;
