@@ -6,17 +6,21 @@
  * handles window resizes.
  *
  */
+import * as THREE from 'three';
 import { WebGLRenderer, OrthographicCamera, Vector3, Group } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { SeedScene } from 'scenes';
 import { Plate, Strawberry } from 'objects';
 
+const WIDTH = window.innerWidth;
+const HEIGHT = window.innerHeight;
+
 // Initialize core ThreeJS components
-const scene = new SeedScene(window.innerWidth, window.innerHeight);
+const scene = new SeedScene(WIDTH, HEIGHT);
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-const aspectRatio = window.innerWidth / window.innerHeight;
+const aspectRatio = WIDTH / HEIGHT;
 const cameraWidth = 960;
 const cameraHeight = cameraWidth / aspectRatio;
 const camera = new OrthographicCamera(
@@ -43,10 +47,10 @@ document.body.appendChild(canvas);
 let group = new Group();
 scene.add( group );
 let objects = [];
-let curr_plate = new Plate(0, -90, -250);
+let curr_plate = new Plate(0, -90, -250, WIDTH, HEIGHT);
 scene.add(curr_plate);
 objects.push(curr_plate);
-curr_plate = new Plate(0, -90, -150);
+curr_plate = new Plate(0, -90, -150, WIDTH, HEIGHT);
 scene.add(curr_plate);
 objects.push(curr_plate);
 let strawberry = new Strawberry(0, -90, -100);
@@ -54,11 +58,11 @@ scene.add(strawberry);
 objects.push(strawberry);
 const controls = new DragControls(objects, camera, renderer.domElement);
 controls.addEventListener( 'dragstart', function ( event ) {
-	event.object.material.emissive.set( 0xaaaaaa );
+	// event.object.material.emissive.set( 0xaaaaaa );
 } );
 
 controls.addEventListener( 'dragend', function ( event ) {
-	event.object.material.emissive.set( 0x000000 );
+	// event.object.material.emissive.set( 0x000000 );
     console.log(event.object.position.x);
     console.log(event.object.position.y);
     console.log(event.object);

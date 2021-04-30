@@ -2,23 +2,22 @@ import * as THREE from 'three';
 import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial, TextureLoader, Sprite, SpriteMaterial } from 'three';
 
 class Plate extends Group {
-    constructor(x, y, z) {
+    constructor(x, y, z, width, height) {
         // Call parent Group() constructor
         super();
 
         this.name = 'plate';
 
-        // loader.load(MODEL, (gltf) => {
-        //     this.add(gltf.scene);
-        // });
-
+        const image = require('../../scenes/plate_cropped.png');
+        console.log(image);
+        // const map = new THREE.TextureLoader().load(image);
         const map = new THREE.TextureLoader().load( 'https://lh4.googleusercontent.com/wjNg8xx-jiOfgIxxcnmLV2lZbw5tkwbyRsZ7bIQ4cDQjlxBA0BtpEz6ZRs3Oz33eRQp-Pqc_Tvfypxw7dN3VRCVW_zJXpLKmR1THbOE' );
         const material = new THREE.SpriteMaterial( { map: map } );
         const sprite = new THREE.Sprite( material );
-        sprite.scale.set( 30, 14, 1 );
+        sprite.scale.set( width * 0.15, height * 0.075, 1 );
         sprite.position.z = 0; 
-        sprite.position.x = -5; 
-        sprite.position.y = -28;
+        sprite.position.x = x; 
+        sprite.position.y = y;
         this.add( sprite );
 
         // const plate = THREE.Group();
@@ -27,9 +26,9 @@ class Plate extends Group {
         //     new THREE.BoxBufferGeometry(1, 1, 1),
         //     new THREE.MeshLambertMaterial({color: 0xFFFFFF})
         // );
-        // main.position.z = 0;
-        // main.position.y = -30;
-        // main.position.x = -80;
+        // main.position.z = z;
+        // main.position.y = y;
+        // main.position.x = x;
         // main.castShadow = true;
         // main.receiveShadow = true;
         // this.add(main);
