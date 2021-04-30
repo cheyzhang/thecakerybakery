@@ -1,6 +1,6 @@
 import * as Dat from 'dat.gui';
 import * as THREE from 'three';
-import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader } from 'three';
+import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
 import { Flower, Land, Plate } from 'objects';
 import { BasicLights } from 'lights';
 
