@@ -7,7 +7,7 @@
  *
  */
 import * as THREE from 'three';
-import { WebGLRenderer, OrthographicCamera, Vector3, Group } from 'three';
+import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { SeedScene } from 'scenes';
 import { Plate, Strawberry } from 'objects';
@@ -61,12 +61,24 @@ controls.addEventListener( 'dragstart', function ( event ) {
 	// event.object.material.emissive.set( 0xaaaaaa );
 } );
 
+const mouse = new THREE.Vector2();
+
+function onMouseMove( event ) {
+	// calculate mouse position in normalized device coordinates
+	// (-1 to +1) for both components
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+
+window.addEventListener( 'mousemove', onMouseMove, false ); 
+
 controls.addEventListener( 'dragend', function ( event ) {
 	// event.object.material.emissive.set( 0x000000 );
     console.log(event.object.position.x);
     console.log(event.object.position.y);
     console.log(event.object);
     console.log(event.object.parent.name);
+
 } );
 
 // controls.enableDamping = true;

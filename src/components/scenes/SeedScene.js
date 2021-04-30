@@ -1,6 +1,6 @@
 import * as Dat from 'dat.gui';
 import * as THREE from 'three';
-import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
+import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial, LinearMipMapLinearFilter} from 'three';
 import { Flower, Land, Plate } from 'objects';
 import { BasicLights } from 'lights';
 
@@ -28,20 +28,30 @@ class SeedScene extends Scene {
         this.add(lights);
         // this.add(plate);
 
-        const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
-        // const planeMaterial = new THREE.MeshLambertMaterial(0x7ec022);
-        // var texture = new THREE.TextureLoader().load('https://lh3.googleusercontent.com/nCQ4_MhGCfIDk9SXkFeNje8jkoB3TPpCZNB71jAZhR_Ydpe4FZIVsPIz2dCsPDyvZy6NBEPEgRIu_2QeVYillbNgZFb9iJ4fxouknf7miVorEr6qlNjolu4k6PetQ3795EjWiD-P');
-        var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
-        const planeMaterial = new THREE.MeshLambertMaterial({
-            map: texture
-        });
-        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        // const plane = new THREE.Mesh(planeGeometry);
-        plane.position.z = 100;
-        // const plane = new THREE.Mesh(planeGeometry);
-        plane.receiveShadow = true;
-        plane.matrixAutoUpdate = false;
-        this.add(plane);
+        var loader = new THREE.TextureLoader(); 
+        loader.setCrossOrigin('anonymous'); 
+        const map = new THREE.TextureLoader().load( 'https://lh4.googleusercontent.com/GUbzlKdBTI6k0VPbFZbNw0Y-CGMaGOcUsj23MJ2r83ytkA608-2O2odMh4dxru_A-53_7VciTkEstu9mH9s_5URoIebUI2Y2RACvxPKn' );
+        // const map = new THREE.TextureLoader().load('https://lh3.googleusercontent.com/-r1AVhz4Wb5Hlw9EPD4FMJg7Z5iM5IK8X_GrkkPCWNOB8ieEGj8zqhB7IHPFbDQvUTPWDw8EEM9xNM7m_ues3jnVg6dZKRLEtEEySZZ_'); 
+        map.minfilter = THREE.LinearMipMapLinearFilter
+        const material = new THREE.SpriteMaterial( { map: map } );
+        const sprite = new THREE.Sprite( material );
+        sprite.scale.set( width* 0.58, height* 0.7, 1 );
+        this.add(sprite)
+
+        // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
+        // // const planeMaterial = new THREE.MeshLambertMaterial(0x7ec022);
+        // // var texture = new THREE.TextureLoader().load('https://lh3.googleusercontent.com/nCQ4_MhGCfIDk9SXkFeNje8jkoB3TPpCZNB71jAZhR_Ydpe4FZIVsPIz2dCsPDyvZy6NBEPEgRIu_2QeVYillbNgZFb9iJ4fxouknf7miVorEr6qlNjolu4k6PetQ3795EjWiD-P');
+        // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
+        // const planeMaterial = new THREE.MeshLambertMaterial({
+        //     map: texture
+        // });
+        // const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        // // const plane = new THREE.Mesh(planeGeometry);
+        // plane.position.z = 100;
+        // // const plane = new THREE.Mesh(planeGeometry);
+        // plane.receiveShadow = true;
+        // plane.matrixAutoUpdate = false;
+        // this.add(plane);
 
         // Populate GUI
         // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
