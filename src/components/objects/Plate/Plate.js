@@ -4,7 +4,7 @@ import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial } from 'three';
 // import MODEL from './land.gltf';
 
 class Plate extends Group {
-    constructor() {
+    constructor(x, y, z) {
         // Call parent Group() constructor
         super();
 
@@ -18,12 +18,13 @@ class Plate extends Group {
 
         // const plate = THREE.Group();
         const main = new THREE.Mesh(
-            new THREE.BoxBufferGeometry(1, 1, 1),
-            new THREE.MeshLambertMaterial(0x7ec022)
+            new THREE.BoxBufferGeometry(50, 50, 1),
+            // new THREE.MeshLambertMaterial(0x7ec022)
+            new THREE.MeshLambertMaterial(0xadd8e6)
         );
-        main.position.z = 0;
-        main.position.y = -30;
-        main.position.x = -80;
+        main.position.z = x;
+        main.position.y = y;
+        main.position.x = z;
         main.castShadow = true;
         main.receiveShadow = true;
         this.add(main);

@@ -8,10 +8,12 @@
  */
 import { WebGLRenderer, PerspectiveCamera, OrthographicCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { SeedScene } from 'scenes';
+import { Plate } from 'objects';
 
 // Initialize core ThreeJS components
-const scene = new SeedScene();
+const scene = new SeedScene(window.innerWidth, window.innerHeight);
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
@@ -38,16 +40,36 @@ document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
 // Set up controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.enablePan = false;
-controls.minZoom = 4;
-controls.maxZoom = 100;
-controls.update();
+// const controls = new OrbitControls(camera, canvas);
+let objects = [];
+let curr_plate = new Plate(0, -30, -100);
+scene.add(curr_plate);
+objects.push(curr_plate);
+curr_plate = new Plate(0, -30, -50);
+scene.add(curr_plate);
+objects.push(curr_plate);
+const controls = new DragControls(objects, camera, renderer.domElement);
+controls.addEventListener( 'dragstart', function ( event ) {
+
+	event.object.material.emissive.set( 0xaaaaaa );
+
+} );
+
+controls.addEventListener( 'dragend', function ( event ) {
+
+	event.object.material.emissive.set( 0x000000 );
+
+} );
+
+// controls.enableDamping = true;
+// controls.enablePan = false;
+// controls.minZoom = 4;
+// controls.maxZoom = 100;
+// controls.update();
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    controls.update();
+    // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);
