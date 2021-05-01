@@ -1,7 +1,8 @@
-# The Cakery Bakery
+# COS 426 Final Project Seed
 
-Final Project for COS426: Computer Graphics. Spring 2021. Alicia Liu + Cheyenne Zhang.
-[click here for demo](https://reillybova.github.io/three-seed/)
+This skeleton project will help you get started on your ThreeJS project and provide a strong foundation for extension. It sets up a simple scene, camera, and renderer in a modern JavaScript environment, and is written using some common best-practices that you may want to draw from.
+
+[Online Demo](https://reillybova.github.io/three-seed/)
 
 ## Installation
 To build this project, you will need to use GitHub's NodeJS Package Manager (npm) to manage and install project dependencies. All npm settings, as well as your project dependencies and their versionings, are defined in the file `package.json`. We will unpack this file in the next section.
@@ -71,3 +72,4 @@ This skeleton project was adapted from [edwinwebb's ThreeJS seed project](https:
 
 ## License
 [MIT](./LICENSE)
+# thecakerybakery

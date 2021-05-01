@@ -1,6 +1,6 @@
 {
   "name": "the-cakery-bakery",
-  "repository": "REPOSITORY-NAME-AS-IT-APPEARS-IN-GITHUB-URL",
+  "repository": "https://github.com/cz10/thecakerybakery",
   "version": "0.1.0",
   "title": "The Cakery Bakery",
   "description": "The Cakery Bakery is a fast-paced game where the user fulfills customer's cake orders.",
@@ -9,11 +9,11 @@
     "graphics",
     "three.js",
     "COS 426",
-    "ivy league",
-    "keyword1",
-    "keyword2",
-    "...",
-    "this last entry CANNOT have a comma after it ->"
+    "cute",
+    "sweets",
+    "cake",
+    "bakery",
+    "game"
   ],
   "scripts": {
     "start": "webpack-dev-server --mode development --output-public-path \"\"",

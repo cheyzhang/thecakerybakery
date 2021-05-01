@@ -18,20 +18,18 @@ class KitchenScene extends Scene {
         };
 
         // Set background to a nice color
-        this.background = new Color(0x7ec0ee);
+        this.background = new Color(0xE8D4E2);
 
         // Add meshes to scene
         const lights = new BasicLights();
-        // const plate = new Plate();
         this.add(lights);
-        // this.add(plate);
-        let curr_plate = new Plate(-350, -90, undefined, width, height);
-        this.add(curr_plate);
-        this.addToUpdateList(curr_plate);
-        this.state.draggable.push(curr_plate);
-        // curr_plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
-        // scene.add(curr_plate);
-        // objects.push(curr_plate);
+        let plate = new Plate(-350, -90, undefined, width, height);
+        this.add(plate);
+        this.addToUpdateList(plate);
+        // this.state.draggable.push(curr_plate);
+        // plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
+        // scene.add(plate);
+        // objects.push(plate);
         let strawberry = new Strawberry(-43, 25, undefined, width, height);
         this.add(strawberry);
         this.state.draggable.push(strawberry);
@@ -39,16 +37,14 @@ class KitchenScene extends Scene {
         var loader = new THREE.TextureLoader(); 
         loader.setCrossOrigin('anonymous'); 
         const map = new THREE.TextureLoader().load( 'https://lh4.googleusercontent.com/GUbzlKdBTI6k0VPbFZbNw0Y-CGMaGOcUsj23MJ2r83ytkA608-2O2odMh4dxru_A-53_7VciTkEstu9mH9s_5URoIebUI2Y2RACvxPKn' );
-        // const map = new THREE.TextureLoader().load('https://lh3.googleusercontent.com/-r1AVhz4Wb5Hlw9EPD4FMJg7Z5iM5IK8X_GrkkPCWNOB8ieEGj8zqhB7IHPFbDQvUTPWDw8EEM9xNM7m_ues3jnVg6dZKRLEtEEySZZ_'); 
         map.minfilter = THREE.LinearMipMapLinearFilter
         const material = new THREE.SpriteMaterial( { map: map } );
         const sprite = new THREE.Sprite( material );
         sprite.scale.set( width* 0.58, height* 0.7, 1 );
+        sprite.position.z = -1;
         this.add(sprite)
 
         // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
-        // // const planeMaterial = new THREE.MeshLambertMaterial(0x7ec022);
-        // // var texture = new THREE.TextureLoader().load('https://lh3.googleusercontent.com/nCQ4_MhGCfIDk9SXkFeNje8jkoB3TPpCZNB71jAZhR_Ydpe4FZIVsPIz2dCsPDyvZy6NBEPEgRIu_2QeVYillbNgZFb9iJ4fxouknf7miVorEr6qlNjolu4k6PetQ3795EjWiD-P');
         // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
         // const planeMaterial = new THREE.MeshLambertMaterial({
         //     map: texture
@@ -56,7 +52,6 @@ class KitchenScene extends Scene {
         // const plane = new THREE.Mesh(planeGeometry, planeMaterial);
         // // const plane = new THREE.Mesh(planeGeometry);
         // plane.position.z = 100;
-        // // const plane = new THREE.Mesh(planeGeometry);
         // plane.receiveShadow = true;
         // plane.matrixAutoUpdate = false;
         // this.add(plane);

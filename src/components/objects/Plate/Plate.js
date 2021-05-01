@@ -38,14 +38,12 @@ class Plate extends Group {
     }
 
     update(timeStamp, stepSize, width) {
-        console.log(width / 2);
         if (this.children[0].position.x >= width / 3) {
             this.children[0].position.set(-width / 3, this.children[0].position.y, this.children[0].position.z);
         }
         else {
             this.children[0].position.set(this.children[0].position.x + stepSize, this.children[0].position.y, this.children[0].position.z);
         }
-        console.log(this.children[0].position.x);
     }
 }
 

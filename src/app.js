@@ -10,12 +10,13 @@ import * as THREE from 'three';
 import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { KitchenScene } from 'scenes';
-import { Plate, Strawberry } from 'objects';
+// import { Plate, Strawberry } from 'objects';
 
+// Constants
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
-console.log(WIDTH);
-console.log(HEIGHT);
+// console.log(WIDTH);
+// console.log(HEIGHT);
 
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
@@ -45,9 +46,11 @@ document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
 // Set up controls
+// *** group together to make draggable
 let group = new Group();
 scene.add( group );
 const controls = new DragControls(scene.state.draggable, camera, renderer.domElement);
+// on drag start
 controls.addEventListener( 'dragstart', function ( event ) {
     event.object.material.opacity = 0.6;
 } );
@@ -57,12 +60,13 @@ const mouse = new THREE.Vector2();
 function onMouseMove( event ) {
 	// calculate mouse position in normalized device coordinates
 	// (-1 to +1) for both components
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	mouse.x = ( event.clientX / WIDTH ) * 2 - 1;
+	mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
 }
 
 window.addEventListener( 'mousemove', onMouseMove, false ); 
 
+// on drag end
 controls.addEventListener( 'dragend', function ( event ) {
     event.object.material.opacity = 1;
     console.log(event.object.position.x);
