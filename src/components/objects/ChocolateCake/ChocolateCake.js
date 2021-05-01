@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial } from 'three';
 
 class ChocolateCake extends Group {
-    constructor(x, y, z, width, height) {
+    constructor(x, y, width, height) {
         // Call parent Group() constructor
         super();
 
@@ -17,8 +17,6 @@ class ChocolateCake extends Group {
         sprite.position.z = 0; 
         sprite.position.x = x; 
         sprite.position.y = y;
-        // console.log(sprite.geometry.boundingBox);
-        // sprite.geometry.computeBoundingBox();
         this.add( sprite );
         return this;
     }

@@ -1,4 +1,3 @@
-import * as Dat from 'dat.gui';
 import * as THREE from 'three';
 import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
 import { Plate, Strawberry, ChocolateCake, VanillaCake } from 'objects';
@@ -11,7 +10,6 @@ class KitchenScene extends Scene {
 
         // Init state
         this.state = {
-            // gui: new Dat.GUI(), // Create GUI for scene
             rotationSpeed: 0,
             updateList: [],
             draggable: []
@@ -63,9 +61,6 @@ class KitchenScene extends Scene {
     }
 
     update(timeStamp, stepSize, WIDTH) {
-        // const { rotationSpeed, updateList } = this.state;
-        // this.rotation.y = (rotationSpeed * timeStamp) / 10000;
-
         // Call update for each object in the updateList
         for (const obj of this.state.updateList) {
             obj.update(timeStamp, stepSize, WIDTH);
@@ -73,24 +68,25 @@ class KitchenScene extends Scene {
     }
 
     addIngredients(width, height) {
-        let plate = new Plate(-width / 3, -90, undefined, width, height);
+        let plate = new Plate(-width / 3, -90, width, height);
         this.add(plate);
         this.addToUpdateList(plate);
         // this.state.draggable.push(curr_plate);
         // plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
         // scene.add(plate);
         // objects.push(plate);
-        let strawberry = new Strawberry(-43, 25, undefined, width, height);
-        this.add(strawberry);
-        this.state.draggable.push(strawberry);
 
-        let chocolate_cake = new ChocolateCake(0, 40, undefined, width, height);
+        let chocolate_cake = new ChocolateCake(20, 120, width, height);
         this.add(chocolate_cake);
         this.state.draggable.push(chocolate_cake);
 
-        let vanilla_cake = new VanillaCake(30, 40, undefined, width, height);
+        let vanilla_cake = new VanillaCake(-40, 120, width, height);
         this.add(vanilla_cake);
         this.state.draggable.push(vanilla_cake);
+
+        let strawberry = new Strawberry(-43, 25, width, height);
+        this.add(strawberry);
+        this.state.draggable.push(strawberry);
     }
 }
 

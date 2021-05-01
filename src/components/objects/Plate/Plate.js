@@ -2,16 +2,13 @@ import * as THREE from 'three';
 import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial, TextureLoader, Sprite, SpriteMaterial, Vector3 } from 'three';
 
 class Plate extends Group {
-    constructor(x, y, z, width, height) {
+    constructor(x, y, width, height) {
         // Call parent Group() constructor
         super();
 
         this.name = 'plate';
 
-        // const image = require('../../scenes/plate_cropped.png');
-        // console.log(image);
-        // const map = new THREE.TextureLoader().load(image);
-        const map = new THREE.TextureLoader().load( 'https://lh4.googleusercontent.com/wjNg8xx-jiOfgIxxcnmLV2lZbw5tkwbyRsZ7bIQ4cDQjlxBA0BtpEz6ZRs3Oz33eRQp-Pqc_Tvfypxw7dN3VRCVW_zJXpLKmR1THbOE' );
+        const map = new THREE.TextureLoader().load( 'src/assets/plate_cropped.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
@@ -19,10 +16,7 @@ class Plate extends Group {
         sprite.position.z = 0; 
         sprite.position.x = x; 
         sprite.position.y = y;
-        console.log(sprite.position);
         this.add( sprite );
-
-        // const plate = THREE.Group();
 
         // const main = new THREE.Mesh(
         //     new THREE.BoxBufferGeometry(1, 1, 1),
