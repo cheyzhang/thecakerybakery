@@ -36,7 +36,7 @@ class KitchenScene extends Scene {
 
         var loader = new THREE.TextureLoader(); 
         loader.setCrossOrigin('anonymous'); 
-        const map = new THREE.TextureLoader().load( 'https://lh4.googleusercontent.com/GUbzlKdBTI6k0VPbFZbNw0Y-CGMaGOcUsj23MJ2r83ytkA608-2O2odMh4dxru_A-53_7VciTkEstu9mH9s_5URoIebUI2Y2RACvxPKn' );
+        const map = new THREE.TextureLoader().load( 'src/assets/bgpink.png' );
         map.minfilter = THREE.LinearMipMapLinearFilter
         const material = new THREE.SpriteMaterial( { map: map } );
         const sprite = new THREE.Sprite( material );

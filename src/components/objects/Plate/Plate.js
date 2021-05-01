@@ -8,10 +8,7 @@ class Plate extends Group {
 
         this.name = 'plate';
 
-        // const image = require('../../scenes/plate_cropped.png');
-        // console.log(image);
-        // const map = new THREE.TextureLoader().load(image);
-        const map = new THREE.TextureLoader().load( 'https://lh4.googleusercontent.com/wjNg8xx-jiOfgIxxcnmLV2lZbw5tkwbyRsZ7bIQ4cDQjlxBA0BtpEz6ZRs3Oz33eRQp-Pqc_Tvfypxw7dN3VRCVW_zJXpLKmR1THbOE' );
+        const map = new THREE.TextureLoader().load('src/components/scenes/plate_cropped.png');
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );

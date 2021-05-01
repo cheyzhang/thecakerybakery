@@ -10,13 +10,16 @@ import * as THREE from 'three';
 import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { KitchenScene } from 'scenes';
-// import { Plate, Strawberry } from 'objects';
+import BlipFile from './assets/blip.wav';
+import PointFile from './assets/point.wav';
 
 // Constants
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
-// console.log(WIDTH);
-// console.log(HEIGHT);
+
+// Sounds
+const blip = new Audio(BlipFile);
+
 
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
@@ -53,18 +56,19 @@ const controls = new DragControls(scene.state.draggable, camera, renderer.domEle
 // on drag start
 controls.addEventListener( 'dragstart', function ( event ) {
     event.object.material.opacity = 0.6;
+    blip.play();
 } );
 
-const mouse = new THREE.Vector2();
+// const mouse = new THREE.Vector2();
 
-function onMouseMove( event ) {
-	// calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-	mouse.x = ( event.clientX / WIDTH ) * 2 - 1;
-	mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
-}
+// function onMouseMove( event ) {
+// 	// calculate mouse position in normalized device coordinates
+// 	// (-1 to +1) for both components
+// 	mouse.x = ( event.clientX / WIDTH ) * 2 - 1;
+// 	mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
+// }
 
-window.addEventListener( 'mousemove', onMouseMove, false ); 
+// window.addEventListener( 'mousemove', onMouseMove, false ); 
 
 // on drag end
 controls.addEventListener( 'dragend', function ( event ) {
