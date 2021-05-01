@@ -7,8 +7,9 @@ class Strawberry extends Group {
         super();
 
         this.name = 'strawberry';
+        this.type = 'topping';
 
-        const map = new THREE.TextureLoader().load( 'https://lh6.googleusercontent.com/JOSi4KLhXjb1cCWRJDTaubvhtpyUD-OKdBYSoIqCrQphSfkIQ-JTY2T7QGS-qKIFbr4U8e-D05jdrEgsGxHVov9Lz-SGm-TPk2d1kmY' );
+        const map = new THREE.TextureLoader().load( 'src/assets/strawberry.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
@@ -20,6 +21,14 @@ class Strawberry extends Group {
         // sprite.geometry.computeBoundingBox();
         this.add( sprite );
         return this;
+    }
+    update(timeStamp, stepSize, width) {
+        if (this.children[0].position.x >= width / 3) {
+            this.children[0].position.set(-width / 3, this.children[0].position.y, this.children[0].position.z);
+        }
+        else {
+            this.children[0].position.set(this.children[0].position.x + stepSize, this.children[0].position.y, this.children[0].position.z);
+        }
     }
 }
 

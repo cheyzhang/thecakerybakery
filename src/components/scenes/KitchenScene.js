@@ -2,7 +2,7 @@ import * as Dat from 'dat.gui';
 import * as THREE from 'three';
 import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
 import { Plate, Strawberry } from 'objects';
-import { BasicLights } from 'lights';
+// import { BasicLights, DimLights } from 'lights';
 
 class KitchenScene extends Scene {
     constructor(width, height) {
@@ -21,28 +21,26 @@ class KitchenScene extends Scene {
         this.background = new Color(0xE8D4E2);
 
         // Add meshes to scene
-        const lights = new BasicLights();
-        this.add(lights);
-        let plate = new Plate(-350, -90, undefined, width, height);
-        this.add(plate);
-        this.addToUpdateList(plate);
-        // this.state.draggable.push(curr_plate);
-        // plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
-        // scene.add(plate);
-        // objects.push(plate);
-        let strawberry = new Strawberry(-43, 25, undefined, width, height);
-        this.add(strawberry);
-        this.state.draggable.push(strawberry);
+        // const lights = new DimLights();
+        // // const lights = new BasicLights();
+        // this.add(lights);
 
-        var loader = new THREE.TextureLoader(); 
-        loader.setCrossOrigin('anonymous'); 
-        const map = new THREE.TextureLoader().load( 'src/assets/bgpink.png' );
+        let map = new THREE.TextureLoader().load( 'src/assets/bgpink.png' );
         map.minfilter = THREE.LinearMipMapLinearFilter
-        const material = new THREE.SpriteMaterial( { map: map } );
-        const sprite = new THREE.Sprite( material );
+        let material = new THREE.SpriteMaterial( { map: map } );
+        let sprite = new THREE.Sprite( material );
         sprite.scale.set( width* 0.58, height* 0.7, 1 );
         sprite.position.z = -1;
-        this.add(sprite)
+        this.add(sprite);
+
+        map = new THREE.TextureLoader().load( 'src/assets/start.png' );
+        map.minfilter = THREE.LinearMipMapLinearFilter
+        material = new THREE.SpriteMaterial( { map: map } );
+        sprite = new THREE.Sprite( material );
+        sprite.scale.set( width* 0.4, height* 0.48, 1 );
+        sprite.position.z = -1;
+        sprite.type = "start";
+        this.add(sprite);
 
         // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
         // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
@@ -72,6 +70,19 @@ class KitchenScene extends Scene {
         for (const obj of this.state.updateList) {
             obj.update(timeStamp, stepSize, WIDTH);
         }
+    }
+
+    addIngredients(width, height) {
+        let plate = new Plate(-width / 3, -90, undefined, width, height);
+        this.add(plate);
+        this.addToUpdateList(plate);
+        // this.state.draggable.push(curr_plate);
+        // plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
+        // scene.add(plate);
+        // objects.push(plate);
+        let strawberry = new Strawberry(-43, 25, undefined, width, height);
+        this.add(strawberry);
+        this.state.draggable.push(strawberry);
     }
 }
 

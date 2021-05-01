@@ -13,17 +13,21 @@ import { KitchenScene } from 'scenes';
 import BlipFile from './assets/blip.wav';
 import PointFile from './assets/point.wav';
 
+// State
+let playing = false;
+
 // Constants
-const WIDTH = window.innerWidth;
-const HEIGHT = window.innerHeight;
+let WIDTH = window.innerWidth;
+let HEIGHT = window.innerHeight;
 
 // Sounds
 const blip = new Audio(BlipFile);
 
-
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
 const renderer = new WebGLRenderer({ antialias: true });
+
+changeOpacity(0.5);
 
 // Set up camera
 const aspectRatio = WIDTH / HEIGHT;
@@ -36,7 +40,7 @@ const camera = new OrthographicCamera(
     cameraHeight / -2, // bottom
     0, // near plane
     150 // far plane
-  );
+);
 camera.position.set(0, 0, 0.5);
 camera.lookAt(new Vector3(0, 0, 0));
 
@@ -48,45 +52,6 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
-// Set up controls
-// *** group together to make draggable
-let group = new Group();
-scene.add( group );
-const controls = new DragControls(scene.state.draggable, camera, renderer.domElement);
-// on drag start
-controls.addEventListener( 'dragstart', function ( event ) {
-    event.object.material.opacity = 0.6;
-    blip.play();
-} );
-
-// const mouse = new THREE.Vector2();
-
-// function onMouseMove( event ) {
-// 	// calculate mouse position in normalized device coordinates
-// 	// (-1 to +1) for both components
-// 	mouse.x = ( event.clientX / WIDTH ) * 2 - 1;
-// 	mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
-// }
-
-// window.addEventListener( 'mousemove', onMouseMove, false ); 
-
-// on drag end
-controls.addEventListener( 'dragend', function ( event ) {
-    event.object.material.opacity = 1;
-    // console.log(event.object.position.x);
-    // console.log(event.object.position.y);
-    // console.log(event.object);
-    // console.log(event.object.parent.name);
-    // console.log(scene.state.updateList[0].children[0].position)
-    // console.log(event.object.position)
-    let plate_pos = scene.state.updateList[0].children[0].position; 
-    let obj_pos = event.object.position; 
-    if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
-        console.log("in range")
-    }
-
-} );
-
 // const controls = new OrbitControls(camera, canvas);
 // controls.enableDamping = true;
 // controls.enablePan = false;
@@ -96,8 +61,8 @@ controls.addEventListener( 'dragend', function ( event ) {
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    if (timeStamp % 50 < 20) {
-        scene.update(timeStamp, 3, WIDTH);
+    if (timeStamp % 50 < 20 && playing) {
+        scene.update(timeStamp, 2, WIDTH);
     }
     // controls.update();
     renderer.render(scene, camera);
@@ -112,7 +77,93 @@ const windowResizeHandler = () => {
     const { innerHeight, innerWidth } = window;
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight;
+    WIDTH = window.innerWidth;
+    HEIGHT = window.innerHeight;
     camera.updateProjectionMatrix();
 };
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
+
+window.addEventListener('keydown', function (event) {
+    if (event.key == ' ' && !playing) {
+        startGame();
+    }
+});
+
+function startGame() {
+    // console.log("starting");
+    playing = true;
+
+    // console.log(scene);
+    scene.addIngredients(WIDTH, HEIGHT);
+    changeOpacity(1);
+    for (const obj of scene.children) {
+        if (obj.type == "start") {
+            scene.remove(obj);
+        }
+    }
+    // Set up controls
+    const controls = new DragControls(scene.state.draggable, camera, renderer.domElement);
+    // on drag start
+    let orig_pos;
+    controls.addEventListener('dragstart', function (event) {
+        orig_pos = event.object.position.clone();
+        console.log(orig_pos);
+        event.object.material.opacity = 0.6;
+        blip.play();
+    });
+
+    // const mouse = new THREE.Vector2();
+
+    // function onMouseMove( event ) {
+    // 	// calculate mouse position in normalized device coordinates
+    // 	// (-1 to +1) for both components
+    // 	mouse.x = ( event.clientX / WIDTH ) * 2 - 1;
+    // 	mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
+    // }
+
+    // window.addEventListener( 'mousemove', onMouseMove, false ); 
+
+    // on drag end
+    controls.addEventListener('dragend', function (event) {
+        event.object.material.opacity = 1;
+        // console.log(event.object.position.x);
+        // console.log(event.object.position.y);
+        // console.log(event.object);
+        // console.log(event.object.parent.name);
+        // console.log(scene.state.updateList[0].children[0].position)
+        // console.log(event.object.position)
+        let plate_pos = scene.state.updateList[0].children[0].position;
+        let obj_pos = event.object.position;
+        console.log(event.object);
+        if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
+            console.log("in range")
+            if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
+                scene.state.updateList.push(event.object.parent);
+            }
+            else {
+                event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
+                // scene.remove(event.object.parent);
+            }
+        }
+        else {
+            event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
+        }
+    });
+}
+
+function changeOpacity(value) {
+    for (const obj of scene.children) {
+        console.log(obj);
+        console.log(obj.type);
+        if (obj.type == "Sprite") {
+            obj.material.opacity = value;
+        }
+        else if (obj.type == "start") {
+
+        }
+        else {
+            obj.children[0].material.opacity = value;
+        }
+    }
+}

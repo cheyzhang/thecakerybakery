@@ -8,7 +8,7 @@ class Plate extends Group {
 
         this.name = 'plate';
 
-        const map = new THREE.TextureLoader().load('src/components/scenes/plate_cropped.png');
+        const map = new THREE.TextureLoader().load('src/assets/plate_cropped.png');
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
