@@ -10,24 +10,30 @@ import * as THREE from 'three';
 import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { KitchenScene } from 'scenes';
-import BlipFile from './assets/blip.wav';
-import PointFile from './assets/point.wav';
+import BlipFile from './assets/sfx/blip.wav';
+// import PointFile from './assets/point.wav';
+import StartFile from './assets/sfx/start.wav';
+import PauseFile from './assets/sfx/pause.wav';
 
-// State
-let playing = false;
 
-// Constants
+// Variables
 let WIDTH = window.innerWidth;
 let HEIGHT = window.innerHeight;
+const NOT_PLAYING = 0;
+const PAUSED = 1;
+const PLAYING = 2;
+let playing = NOT_PLAYING;
 
 // Sounds
 const blip = new Audio(BlipFile);
+const start = new Audio(StartFile);
+const pause = new Audio(PauseFile);
 
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
 const renderer = new WebGLRenderer({ antialias: true });
 
-changeOpacity(0.5);
+setSceneOpacity(0.5);
 
 // Set up camera
 const aspectRatio = WIDTH / HEIGHT;
@@ -61,7 +67,7 @@ document.body.appendChild(canvas);
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    if (timeStamp % 50 < 20 && playing) {
+    if (timeStamp % 50 < 20 && playing == PLAYING) {
         scene.update(timeStamp, 2, WIDTH);
     }
     // controls.update();
@@ -85,21 +91,32 @@ windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', function (event) {
-    if (event.key == ' ' && !playing) {
-        startGame();
+    if (event.key == ' ') {
+        if (playing == NOT_PLAYING) {
+            startGame();
+        }
+        else if(playing == PAUSED) {
+            restartGame();
+        }
+        else {
+            pauseGame();
+        }
     }
+
 });
 
 function startGame() {
     // console.log("starting");
-    playing = true;
+    playing = PLAYING;
+    start.play();
 
     // console.log(scene);
     scene.addIngredients(WIDTH, HEIGHT);
-    changeOpacity(1);
+    setSceneOpacity(1);
     for (const obj of scene.children) {
         if (obj.type == "start") {
             scene.remove(obj);
+            break;
         }
     }
     // Set up controls
@@ -135,11 +152,19 @@ function startGame() {
         // console.log(event.object.position)
         let plate_pos = scene.state.updateList[0].children[0].position;
         let obj_pos = event.object.position;
-        console.log(event.object);
+        // console.log(event.object);
         if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
-            console.log("in range")
+            // console.log("in range")
             if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
                 scene.state.updateList.push(event.object.parent);
+                console.log(event.object.parent);
+                for (let i = 0; i < scene.state.draggable.length; i++) {
+                    const obj = scene.state.draggable[i];
+                    if (obj.uuid == event.object.parent.uuid) {
+                        scene.state.draggable.splice(i, 1);
+                        break;
+                    }
+                }
             }
             else {
                 event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
@@ -152,7 +177,19 @@ function startGame() {
     });
 }
 
-function changeOpacity(value) {
+function pauseGame() {
+    playing = PAUSED;
+    pause.play();
+    setSceneOpacity(0.5);
+}
+
+function restartGame() {
+    playing = PLAYING;
+    start.play();
+    setSceneOpacity(1);
+}
+
+function setSceneOpacity(value) {
     for (const obj of scene.children) {
         console.log(obj);
         console.log(obj.type);
