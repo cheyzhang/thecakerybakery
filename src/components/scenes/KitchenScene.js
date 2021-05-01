@@ -1,7 +1,7 @@
 import * as Dat from 'dat.gui';
 import * as THREE from 'three';
 import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
-import { Plate, Strawberry, ChocolateCake } from 'objects';
+import { Plate, Strawberry, ChocolateCake, VanillaCake } from 'objects';
 // import { BasicLights, DimLights } from 'lights';
 
 class KitchenScene extends Scene {
@@ -29,7 +29,7 @@ class KitchenScene extends Scene {
         map.minfilter = THREE.LinearMipMapLinearFilter
         let material = new THREE.SpriteMaterial( { map: map } );
         let sprite = new THREE.Sprite( material );
-        sprite.scale.set( width* 0.58, height* 0.7, 1 );
+        sprite.scale.set( width* 0.65, height* 0.7, 1 );
         sprite.position.z = -1;
         this.add(sprite);
 
@@ -87,6 +87,10 @@ class KitchenScene extends Scene {
         let chocolate_cake = new ChocolateCake(0, 40, undefined, width, height);
         this.add(chocolate_cake);
         this.state.draggable.push(chocolate_cake);
+
+        let vanilla_cake = new VanillaCake(30, 40, undefined, width, height);
+        this.add(vanilla_cake);
+        this.state.draggable.push(vanilla_cake);
     }
 }
 
