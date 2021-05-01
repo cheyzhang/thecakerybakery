@@ -37,7 +37,7 @@ class KitchenScene extends Scene {
         map.minfilter = THREE.LinearMipMapLinearFilter
         material = new THREE.SpriteMaterial( { map: map } );
         sprite = new THREE.Sprite( material );
-        sprite.scale.set( width* 0.4, height* 0.48, 1 );
+        sprite.scale.set( width* 0.2, height* 0.24, 1 );
         sprite.position.z = -1;
         sprite.type = "start";
         this.add(sprite);
