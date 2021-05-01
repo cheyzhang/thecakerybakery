@@ -1,7 +1,7 @@
 import * as Dat from 'dat.gui';
 import * as THREE from 'three';
 import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
-import { Plate, Strawberry } from 'objects';
+import { Plate, Strawberry, ChocolateCake } from 'objects';
 // import { BasicLights, DimLights } from 'lights';
 
 class KitchenScene extends Scene {
@@ -83,6 +83,10 @@ class KitchenScene extends Scene {
         let strawberry = new Strawberry(-43, 25, undefined, width, height);
         this.add(strawberry);
         this.state.draggable.push(strawberry);
+
+        let chocolate_cake = new ChocolateCake(0, 40, undefined, width, height);
+        this.add(chocolate_cake);
+        this.state.draggable.push(chocolate_cake);
     }
 }
 
