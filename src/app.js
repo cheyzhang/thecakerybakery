@@ -24,6 +24,7 @@ let score = 0;
 let lives = 3;
 let level = 1;
 let curr_order;
+let step_size = 3;
 
 // for playing status
 const NOT_STARTED = 0;
@@ -121,7 +122,10 @@ controls.deactivate();
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20 && playing == PLAYING) {
-        scene.update(timeStamp, 2, WIDTH);
+        if (scene.update(timeStamp, step_size, WIDTH) == 0) {
+            // console.log('resetting step size');
+            step_size = 2;
+        }
     }
     renderer.render(scene, camera);
     window.requestAnimationFrame(onAnimationFrameHandler);
@@ -190,12 +194,6 @@ function startGame() {
     scene.addIngredients(WIDTH, HEIGHT);
     setSceneOpacity(1);
     scene.toggleOverlay(WIDTH, HEIGHT, NONE);
-    // for (const obj of scene.children) {
-    //     if (obj.type == "start") {
-    //         scene.remove(obj);
-    //         break;
-    //     }
-    // }   
     randOrder();
 }
 
@@ -230,9 +228,10 @@ function setSceneOpacity(value) {
     }
 }
 
+// generate a new random order
 function randOrder(level) {
     const BASES = ['vanilla_cake', 'chocolate_cake'];
-    const FROSTINGS = ['vanilla', 'strawberry', 'chocolate'];
+    const FROSTINGS = ['vanilla', 'matcha', 'chocolate'];
     const TOPPINGS = ['strawberry', 'candles', 'sprinkles'];
     let order = [];
     order.push(BASES[Math.floor(Math.random() * 2)]);
@@ -258,12 +257,14 @@ function submitOrder() {
             lives -= 1;
             wrong.play();
             randOrder();
+            step_size = 30;
             console.log("you lost a life");
             return;
         }
     }
     score += level * 100;
     correct.play();
+    step_size = 30;
     console.log("CURR SCORE: " + score);
     randOrder();
 }

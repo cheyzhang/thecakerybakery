@@ -67,9 +67,21 @@ class KitchenScene extends Scene {
 
     update(timeStamp, stepSize, WIDTH) {
         // Call update for each object in the updateList
+        // console.log(this.state.updateList[0].children.x);
+        if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
+            for (const obj of this.state.updateList) {
+                if (obj.name != 'plate') {
+                    this.remove(obj);
+                }                
+            }
+            this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
+            // reset plate speed
+            return 0;
+        }
         for (const obj of this.state.updateList) {
             obj.update(timeStamp, stepSize, WIDTH);
         }
+        return 1;
     }
 
     addIngredients(width, height) {
