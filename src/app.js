@@ -11,31 +11,44 @@ import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster } from 'th
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { KitchenScene } from 'scenes';
 import BlipFile from './assets/sfx/blip.wav';
-// import PointFile from './assets/point.wav';
+import CorrectFile from './assets/sfx/correct.wav';
+import WrongFile from './assets/sfx/wrong.wav';
 import StartFile from './assets/sfx/start.wav';
 import PauseFile from './assets/sfx/pause.wav';
 import ErrorFile from './assets/sfx/error.wav';
 
-
-
 // Variables
 let WIDTH = window.innerWidth;
 let HEIGHT = window.innerHeight;
+let score = 0;
+let lives = 3;
+let level = 1;
+let curr_order;
+
+// for playing status
 const NOT_STARTED = 0;
 const PAUSED = 1;
 const PLAYING = 2;
 let playing = NOT_STARTED;
+
+// for overlay
+const START = 0;
+const INSTR = 1;
+const NONE = 2;
 
 // Sounds
 const blip = new Audio(BlipFile);
 const start = new Audio(StartFile);
 const pause = new Audio(PauseFile);
 const error = new Audio(ErrorFile);
+const correct = new Audio(CorrectFile);
+const wrong = new Audio(WrongFile);
 
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
 const renderer = new WebGLRenderer({ antialias: true });
 
+// on start screen so make scene opaque
 setSceneOpacity(0.5);
 
 // Set up camera
@@ -128,6 +141,7 @@ windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', function (event) {
+    // starting/pausing/restarting the game
     if (event.key == ' ') {
         if (playing == NOT_STARTED) {
             startGame();
@@ -140,6 +154,31 @@ window.addEventListener('keydown', function (event) {
         }
     }
 
+    // bringing up instructions
+    if (event.key == 'i') {
+        if (playing == NOT_STARTED) {
+            scene.toggleOverlay(WIDTH, HEIGHT, INSTR);
+        }
+        else {
+            // do nothing if already in play or paused? 
+        }
+    }
+
+    // bring up original start screen (home)
+    if (event.key == 'h') {
+        if (playing == NOT_STARTED) {
+            scene.toggleOverlay(WIDTH, HEIGHT, START);
+        }
+        else {
+            // do nothing if already in play or paused? 
+        }
+    }
+
+    if (event.key == 's') {
+        if (playing == PLAYING) {
+            submitOrder();
+        }
+    }
 });
 
 // start the game
@@ -150,13 +189,14 @@ function startGame() {
 
     scene.addIngredients(WIDTH, HEIGHT);
     setSceneOpacity(1);
-    for (const obj of scene.children) {
-        if (obj.type == "start") {
-            scene.remove(obj);
-            break;
-        }
-    }
-    
+    scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    // for (const obj of scene.children) {
+    //     if (obj.type == "start") {
+    //         scene.remove(obj);
+    //         break;
+    //     }
+    // }   
+    randOrder();
 }
 
 // pause the game
@@ -181,7 +221,7 @@ function setSceneOpacity(value) {
         if (obj.type == "Sprite") {
             obj.material.opacity = value;
         }
-        else if (obj.type == "start") {
+        else if (obj.type == "overlay") {
             // pass
         }
         else {
@@ -189,3 +229,46 @@ function setSceneOpacity(value) {
         }
     }
 }
+
+function randOrder(level) {
+    const BASES = ['vanilla_cake', 'chocolate_cake'];
+    const FROSTINGS = ['vanilla', 'strawberry', 'chocolate'];
+    const TOPPINGS = ['strawberry', 'candles', 'sprinkles'];
+    let order = [];
+    order.push(BASES[Math.floor(Math.random() * 2)]);
+    if (level >= 2) {
+        order.push(FROSTINGS[Math.floor(Math.random() * 3)]);
+    }
+    if (level >= 3) {
+        order.push(TOPPINGS[Math.floor(Math.random() * 3)]);
+    }
+    curr_order = order;
+    console.log("CURR ORDER: "+ order);
+}
+
+// check if order is correct and update score/lives
+function submitOrder() {
+    const attempted_order = [...scene.state.updateList];
+    attempted_order.splice(0, 1);
+    const len = curr_order.length;
+    for (let i = 0; i < len; i++) {
+        console.log(curr_order[i]);
+        console.log(attempted_order[i]);
+        if (curr_order[i] != attempted_order[i].name) {
+            lives -= 1;
+            wrong.play();
+            randOrder();
+            console.log("you lost a life");
+            return;
+        }
+    }
+    score += level * 100;
+    correct.play();
+    console.log("CURR SCORE: " + score);
+    randOrder();
+}
+
+let scoreDiv = document.createElement('div');
+scoreDiv.id = 'scoreboard';
+scoreDiv.innerHTML = 'SDKJFSDJJSDKFHSDKFJSH';
+document.body.appendChild(scoreDiv);

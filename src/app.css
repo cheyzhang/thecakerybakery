@@ -1,0 +1,9 @@
+#scoreboard {
+    position: absolute;
+    width: 175px;
+    height: 75px;
+    left: 20px;
+    font-size: 100px;
+    color: white;
+    /* padding: 20px 20px 20px 30px; */
+}

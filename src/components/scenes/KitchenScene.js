@@ -3,6 +3,10 @@ import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLo
 import { Plate, Strawberry, ChocolateCake, VanillaCake } from 'objects';
 // import { BasicLights, DimLights } from 'lights';
 
+const START = 0;
+const INSTR = 1;
+const NONE = 2;
+
 class KitchenScene extends Scene {
     constructor(width, height) {
         // Call parent Scene() constructor
@@ -12,7 +16,7 @@ class KitchenScene extends Scene {
         this.state = {
             rotationSpeed: 0,
             updateList: [],
-            draggable: []
+            draggable: [],
         };
 
         // Set background to a nice color
@@ -31,14 +35,15 @@ class KitchenScene extends Scene {
         sprite.position.z = -1;
         this.add(sprite);
 
-        map = new THREE.TextureLoader().load( 'src/assets/start.png' );
-        map.minfilter = THREE.LinearMipMapLinearFilter
-        material = new THREE.SpriteMaterial( { map: map } );
-        sprite = new THREE.Sprite( material );
-        sprite.scale.set( width* 0.2, height* 0.24, 1 );
-        sprite.position.z = -1;
-        sprite.type = "start";
-        this.add(sprite);
+        this.toggleOverlay(width, height, START);
+        // map = new THREE.TextureLoader().load( 'src/assets/start.png' );
+        // map.minfilter = THREE.LinearMipMapLinearFilter
+        // material = new THREE.SpriteMaterial( { map: map } );
+        // sprite = new THREE.Sprite( material );
+        // sprite.scale.set( width* 0.2, height* 0.24, 1 );
+        // sprite.position.z = -1;
+        // sprite.type = "start";
+        // this.add(sprite);
 
         // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
         // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
@@ -87,6 +92,34 @@ class KitchenScene extends Scene {
         let strawberry = new Strawberry(-43, 25, width, height);
         this.add(strawberry);
         this.state.draggable.push(strawberry);
+    }
+
+    toggleOverlay(width, height, value) {
+        for (const obj of this.children) {
+            if (obj.type == "overlay") {
+                this.remove(obj);
+                break;
+            }
+        }  
+        let file;
+        if (value == START) { 
+            file = 'src/assets/start.png'
+        }
+        else if (value == INSTR) {
+            file = 'src/assets/instructions.png';
+        }
+        else if (value == NONE) {
+            return;
+        }
+
+        const map = new THREE.TextureLoader().load( file );
+        map.minfilter = THREE.LinearMipMapLinearFilter
+        const material = new THREE.SpriteMaterial( { map: map } );
+        const sprite = new THREE.Sprite( material );
+        sprite.scale.set( width* 0.2, height* 0.24, 1 );
+        sprite.position.z = -1;
+        sprite.type = "overlay";
+        this.add(sprite);
     }
 }
 
