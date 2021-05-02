@@ -27,7 +27,7 @@ class KitchenScene extends Scene {
         // // const lights = new BasicLights();
         // this.add(lights);
 
-        let map = new THREE.TextureLoader().load( 'src/assets/bgpink.png' );
+        let map = new THREE.TextureLoader().load( 'src/assets/background2.png' );
         map.minfilter = THREE.LinearMipMapLinearFilter
         let material = new THREE.SpriteMaterial( { map: map } );
         let sprite = new THREE.Sprite( material );
