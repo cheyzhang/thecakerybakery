@@ -17,6 +17,7 @@ class KitchenScene extends Scene {
             rotationSpeed: 0,
             updateList: [],
             draggable: [],
+            order: []
         };
 
         // Set background to a nice color
@@ -31,7 +32,10 @@ class KitchenScene extends Scene {
         map.minfilter = THREE.LinearMipMapLinearFilter
         let material = new THREE.SpriteMaterial({ map: map });
         let sprite = new THREE.Sprite(material);
+        console.log(sprite);;
+        let aspectRatio = width / height;
         sprite.scale.set(width * 0.57, height * 0.58, 1);
+        // sprite.scale.set(width * 0.57, height * 0.58, 1);
         sprite.position.z = -1;
         this.add(sprite);
 
@@ -57,16 +61,11 @@ class KitchenScene extends Scene {
         this.state.updateList.push(object);
     }
 
-    update(timeStamp, stepSize, WIDTH) {
+    update(timeStamp, stepSize, WIDTH, HEIGHT) {
         // Call update for each object in the updateList
         // console.log(this.state.updateList[0].children.x);
         if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
-            for (const obj of this.state.updateList) {
-                if (obj.name != 'plate') {
-                    this.remove(obj);
-                }
-            }
-            this.state.updateList = this.state.updateList.splice(0, 1);
+            this.clearOrder(WIDTH, HEIGHT);
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
             // reset plate speed
             return 0;
@@ -85,6 +84,8 @@ class KitchenScene extends Scene {
         // plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
         // scene.add(plate);
         // objects.push(plate);
+
+        this.state.order.push('plate');
 
         for (let i = 0; i < 3; i++) {
             let chocolate_cake = new ChocolateCake(-180, -220, width, height);
@@ -119,6 +120,20 @@ class KitchenScene extends Scene {
             this.add(strawberry);
             this.state.draggable.push(strawberry);
         }
+    }
+
+    clearOrder(width, height) {
+        const map = new THREE.TextureLoader().load('src/assets/plate.png');
+        let material = new THREE.SpriteMaterial({ map: map });
+        this.state.updateList[0].children[0].material = material;
+        this.state.updateList[0].children[0].material.needsUpdate = true;
+        this.state.updateList[0].children[0].scale.set(width * 0.1, height * 0.1, 1);
+        this.state.updateList[0].children[0].scale.needsUpdate = true;
+        this.state.updateList[0].children[0].position.y -= 10;
+        this.state.updateList[0].type = "plate";
+        
+        this.state.updateList = this.state.updateList.splice(0, 1);
+        this.state.order = ["plate"];
     }
 
     toggleOverlay(width, height, value) {

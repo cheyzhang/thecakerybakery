@@ -37,6 +37,19 @@ const START = 0;
 const INSTR = 1;
 const NONE = 2;
 
+// mapping to cake combo files
+const FILE_MAP = {
+    "plate": "p",
+    "chocolate_cake": "cc",
+    "yellow_cake": "yc",
+    "chocolate_frosting": "cf",
+    "matcha_frosting": "mf",
+    "strawberry_frosting": "sf",
+    "candles": "c",
+    "sprinkles": "sp",
+    "strawberry": "st"
+};
+
 // Sounds
 const blip = new Audio(BlipFile);
 const start = new Audio(StartFile);
@@ -95,24 +108,45 @@ controls.addEventListener('dragend', function (event) {
     // let plate_pos = scene.state.updateList[0].children[0].position;
     let plate_pos = scene.state.updateList[scene.state.updateList.length - 1].children[0].position;
     let obj_pos = event.object.position;
-    console.log(event.object.parent.type);
+    // console.log(event.object.parent.type);
     if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
-        if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
-            scene.state.updateList.push(event.object.parent);
+        console.log(scene.state.updateList[0]);
+        // if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
+        // uncomment below line for topping on toppings
+        // if (scene.state.updateList[0].type == 'plate' && event.object.parent.type == 'base' || scene.state.updateList[0].type == 'base' && event.object.parent.type == 'frosting' || scene.state.updateList[0].type == 'frosting' && event.object.parent.type == 'topping' || scene.state.updateList[0].type == 'topping' && event.object.parent.type == 'topping') {
+        if (scene.state.updateList[0].type == 'plate' && event.object.parent.type == 'base' || scene.state.updateList[0].type == 'base' && event.object.parent.type == 'frosting' || scene.state.updateList[0].type == 'frosting' && event.object.parent.type == 'topping') {
+            const new_type = event.object.parent.type;
+            const new_name = event.object.parent.name;
+            // scene.state.updateList.push(event.object.parent);
+            // remove the new obj which has correctly been added
             scene.remove(event.object.parent);
-            let map;  
-            if (event.object.parent.name == "chocolate_cake") {
-                map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_cc.png' ); 
+            console.log(scene.state.order);
+            scene.state.order.push(new_name);
+            let file_path = "";
+            for (let i = 0; i < scene.state.order.length; i++) {
+                console.log(scene.state.order[i]);
+                file_path += FILE_MAP[scene.state.order[i]] + "_";
             }
-            else if (event.object.parent.name == "vanilla_cake") {
-                map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_yc.png' );  
-            }
-            let material = new THREE.SpriteMaterial( { map: map } ); 
-            scene.state.updateList[0].children[0].material = material; 
-            scene.state.updateList[0].children[0].material.needsUpdate = true; 
-            scene.state.updateList[0].children[0].scale.set( WIDTH * 0.1, HEIGHT * 0.1, 1 ); 
-            scene.state.updateList[0].children[0].scale.needsUpdate = true; 
+            file_path = 'src/assets/ingredients/cake_combos/' + file_path.substring(0, file_path.length - 1) + ".png"
+            console.log(file_path);
+            const map = new THREE.TextureLoader().load(file_path);
+            // let map;  
+            // if (event.object.parent.name == "chocolate_cake") {
+            //     map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_cc.png' ); 
+            // }
+            // else if (event.object.parent.name == "vanilla_cake") {
+            //     map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_yc.png' );  
+            // }
+
+            let material = new THREE.SpriteMaterial({ map: map });
+            scene.state.updateList[0].children[0].material = material;
+            scene.state.updateList[0].children[0].material.needsUpdate = true;
+            scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            scene.state.updateList[0].children[0].scale.needsUpdate = true;
             scene.state.updateList[0].children[0].position.y += 10;
+            // update the type
+            scene.state.updateList[0].type = new_type;
+            
             for (let i = 0; i < scene.state.draggable.length; i++) {
                 const obj = scene.state.draggable[i];
                 if (obj.uuid == event.object.parent.uuid) {
@@ -126,6 +160,7 @@ controls.addEventListener('dragend', function (event) {
             event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
         }
     }
+
     else {
         error.play();
         event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
@@ -137,7 +172,7 @@ controls.deactivate();
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20 && playing == PLAYING) {
-        if (scene.update(timeStamp, step_size, WIDTH) == 0) {
+        if (scene.update(timeStamp, step_size, WIDTH, HEIGHT) == 0) {
             // console.log('resetting step size');
             step_size = 2;
         }
@@ -165,7 +200,7 @@ window.addEventListener('keydown', function (event) {
         if (playing == NOT_STARTED) {
             startGame();
         }
-        else if(playing == PAUSED) {
+        else if (playing == PAUSED) {
             restartGame();
         }
         else {
@@ -193,9 +228,17 @@ window.addEventListener('keydown', function (event) {
         }
     }
 
+    // submit cake
     if (event.key == 's') {
         if (playing == PLAYING) {
             submitOrder();
+        }
+    }
+
+    // clear
+    if (event.key == 'c') {
+        if (playing == PLAYING) {
+            scene.clearOrder(WIDTH, HEIGHT);
         }
     }
 });
@@ -245,8 +288,8 @@ function setSceneOpacity(value) {
 
 // generate a new random order
 function randOrder(level) {
-    const BASES = ['vanilla_cake', 'chocolate_cake'];
-    const FROSTINGS = ['vanilla', 'matcha', 'chocolate'];
+    const BASES = ['yellow_cake', 'chocolate_cake'];
+    const FROSTINGS = ['chocolate_frosting', 'matcha_frosting', 'strawberry_frosting'];
     const TOPPINGS = ['strawberry', 'candles', 'sprinkles'];
     let order = [];
     order.push(BASES[Math.floor(Math.random() * 2)]);
@@ -257,18 +300,18 @@ function randOrder(level) {
         order.push(TOPPINGS[Math.floor(Math.random() * 3)]);
     }
     curr_order = order;
-    console.log("CURR ORDER: "+ order);
+    console.log("CURR ORDER: " + order);
 }
 
 // check if order is correct and update score/lives
 function submitOrder() {
-    const attempted_order = [...scene.state.updateList];
+    const attempted_order = [...scene.state.order];
     attempted_order.splice(0, 1);
     const len = curr_order.length;
     for (let i = 0; i < len; i++) {
         console.log(curr_order[i]);
         console.log(attempted_order[i]);
-        if (curr_order[i] != attempted_order[i].name) {
+        if (curr_order[i] != attempted_order[i]) {
             lives -= 1;
             wrong.play();
             randOrder();

@@ -7,6 +7,7 @@ class Plate extends Group {
         super();
 
         this.name = 'plate';
+        this.type = 'plate';
 
         const map = new THREE.TextureLoader().load( 'src/assets/plate.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
