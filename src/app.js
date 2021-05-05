@@ -90,10 +90,12 @@ controls.addEventListener('dragstart', function (event) {
 // on drag end
 controls.addEventListener('dragend', function (event) {
     event.object.material.opacity = 1;
-    console.log(event.object.position.x);
-    console.log(event.object.position.y);
-    let plate_pos = scene.state.updateList[0].children[0].position;
+    // console.log(event.object.position.x);
+    // console.log(event.object.position.y);
+    // let plate_pos = scene.state.updateList[0].children[0].position;
+    let plate_pos = scene.state.updateList[scene.state.updateList.length - 1].children[0].position;
     let obj_pos = event.object.position;
+    console.log(event.object.parent.type);
     if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
         if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
             scene.state.updateList.push(event.object.parent);
