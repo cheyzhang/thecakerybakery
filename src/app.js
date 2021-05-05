@@ -38,7 +38,8 @@ let playing = NOT_STARTED;
 // for overlay
 const START = 0;
 const INSTR = 1;
-const NONE = 2;
+const CONTROLS = 2;
+const NONE = 3;
 
 // mapping to cake combo files
 const FILE_MAP = {
@@ -149,7 +150,7 @@ controls.addEventListener('dragend', function (event) {
             scene.state.updateList[0].children[0].position.y += 10;
             // update the type
             scene.state.updateList[0].type = new_type;
-            
+
             for (let i = 0; i < scene.state.draggable.length; i++) {
                 const obj = scene.state.draggable[i];
                 if (obj.uuid == event.object.parent.uuid) {
@@ -227,10 +228,20 @@ window.addEventListener('keydown', function (event) {
         }
     }
 
-    // bring up original start screen (home)
+    // bring up home screen (welcome page)
     if (event.key == 'h') {
         if (playing == NOT_STARTED) {
             scene.toggleOverlay(WIDTH, HEIGHT, START);
+        }
+        else {
+            // do nothing if already in play or paused? 
+        }
+    }
+
+    // bring up controls
+    if (event.key == 'c') {
+        if (playing == NOT_STARTED) {
+            scene.toggleOverlay(WIDTH, HEIGHT, CONTROLS);
         }
         else {
             // do nothing if already in play or paused? 
@@ -315,14 +326,14 @@ function randOrder() {
     curr_order = order;
     console.log("CURR ORDER: " + order);
 
-    let file_path = 'src/assets/ingredients/cake_combos/p_'; 
+    let file_path = 'src/assets/ingredients/cake_combos/p_';
     for (let i = 0; i < order.length; i++) {
-        file_path += FILE_MAP[order[i]]; 
-        if (i != order.length -1) {
-            file_path += "_"; 
+        file_path += FILE_MAP[order[i]];
+        if (i != order.length - 1) {
+            file_path += "_";
         }
     }
-    file_path += ".png"; 
+    file_path += ".png";
     // console.log(file_path)
 
     const map = new THREE.TextureLoader().load(file_path);

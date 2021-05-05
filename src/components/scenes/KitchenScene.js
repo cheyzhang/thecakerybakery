@@ -5,7 +5,8 @@ import { Plate, ChocolateCake, VanillaCake, ChocolateFrosting, MatchaFrosting, S
 
 const START = 0;
 const INSTR = 1;
-const NONE = 2;
+const CONTROLS = 2;
+const NONE = 3;
 
 class KitchenScene extends Scene {
     constructor(width, height) {
@@ -164,10 +165,13 @@ class KitchenScene extends Scene {
         }
         let file;
         if (value == START) {
-            file = 'src/assets/start.png'
+            file = 'src/assets/overlays/welcome_page.png'
         }
         else if (value == INSTR) {
-            file = 'src/assets/instructions.png';
+            file = 'src/assets/overlays/instructions.png';
+        }
+        else if (value == CONTROLS) {
+            file = 'src/assets/overlays/controls.png';
         }
         else if (value == NONE) {
             return;
