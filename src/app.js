@@ -7,7 +7,7 @@
  *
  */
 import * as THREE from 'three';
-import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster } from 'three';
+import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster, FontLoader, TextGeometry, DataTexture3D} from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { KitchenScene } from 'scenes';
 import BlipFile from './assets/sfx/blip.wav';
@@ -93,9 +93,18 @@ camera.lookAt(new Vector3(0, 0, 0));
 renderer.setPixelRatio(window.devicePixelRatio);
 const canvas = renderer.domElement;
 canvas.style.display = 'block'; // Removes padding below canvas
+canvas.id = "canvas";
 document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
+
+// load font for text 
+var link = document.createElement('link');
+link.setAttribute('rel', 'stylesheet');
+link.setAttribute('type', 'text/css');
+link.setAttribute('href', 'https://fonts.googleapis.com/css2?family=VT323&display=swap');
+document.head.appendChild(link);
+
 
 // Set up controls
 const controls = new DragControls(scene.state.draggable, camera, renderer.domElement);
@@ -285,6 +294,32 @@ function startGame() {
     setSceneOpacity(1);
     scene.toggleOverlay(WIDTH, HEIGHT, NONE);
     randOrder();
+
+    var score_text = document.createElement('div');
+    score_text.style.position = 'absolute';
+    score_text.style.width = 100;
+    score_text.style.height = 100;
+    score_text.innerHTML = "Score: " + score;
+    score_text.style.top = 80 + 'px';
+    score_text.style.left = 1300 + 'px';
+    score_text.style.fontFamily = 'VT323';
+    score_text.style.fontSize = 30 + 'px';
+    score_text.style.color = "#E9967A";
+    score_text.id = "score_text"
+    document.body.appendChild(score_text);
+
+    var level_text = document.createElement('div');
+    level_text.style.position = 'absolute';
+    level_text.style.width = 100;
+    level_text.style.height = 100;
+    level_text.innerHTML = "Level: " + level;
+    level_text.style.top = 105 + 'px';
+    level_text.style.left = 1300 + 'px';
+    level_text.style.fontFamily = 'VT323';
+    level_text.style.fontSize = 30 + 'px';
+    level_text.style.color = "#E9967A";
+    level_text.id = "level_text"
+    document.body.appendChild(level_text);
 }
 
 // pause the game
@@ -418,9 +453,7 @@ function submitOrder(newStepSize) {
     scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
     scene.state.menu[0].scale.needsUpdate = true;
     // randOrder();
-}
 
-let scoreDiv = document.createElement('div');
-scoreDiv.id = 'scoreboard';
-scoreDiv.innerHTML = 'SDKJFSDJJSDKFHSDKFJSH';
-document.body.appendChild(scoreDiv);
+    document.getElementById('level_text').innerHTML = 'Level: ' + level;
+    document.getElementById('score_text').innerHTML = 'Score: ' + score;
+}
