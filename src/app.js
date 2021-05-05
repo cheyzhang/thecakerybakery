@@ -309,8 +309,8 @@ function submitOrder() {
     attempted_order.splice(0, 1);
     const len = curr_order.length;
     for (let i = 0; i < len; i++) {
-        console.log(curr_order[i]);
-        console.log(attempted_order[i]);
+        // console.log(curr_order[i]);
+        // console.log(attempted_order[i]);
         if (curr_order[i] != attempted_order[i]) {
             lives -= 1;
             wrong.play();
