@@ -17,6 +17,7 @@ class KitchenScene extends Scene {
             rotationSpeed: 0,
             updateList: [],
             draggable: [],
+            order: []
         };
 
         // Set background to a nice color
@@ -29,9 +30,12 @@ class KitchenScene extends Scene {
 
         let map = new THREE.TextureLoader().load( 'src/assets/bg_with_menu.png' );
         map.minfilter = THREE.LinearMipMapLinearFilter
-        let material = new THREE.SpriteMaterial( { map: map } );
-        let sprite = new THREE.Sprite( material );
-        sprite.scale.set( width * 0.57, height * 0.58, 1 );
+        let material = new THREE.SpriteMaterial({ map: map });
+        let sprite = new THREE.Sprite(material);
+        console.log(sprite);;
+        let aspectRatio = width / height;
+        sprite.scale.set(width * 0.57, height * 0.58, 1);
+        // sprite.scale.set(width * 0.57, height * 0.58, 1);
         sprite.position.z = -1;
         this.add(sprite);
 
@@ -57,16 +61,11 @@ class KitchenScene extends Scene {
         this.state.updateList.push(object);
     }
 
-    update(timeStamp, stepSize, WIDTH) {
+    update(timeStamp, stepSize, WIDTH, HEIGHT) {
         // Call update for each object in the updateList
         // console.log(this.state.updateList[0].children.x);
         if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
-            for (const obj of this.state.updateList) {
-                if (obj.name != 'plate') {
-                    this.remove(obj);
-                }                
-            }
-            this.state.updateList = this.state.updateList.splice(0, 1);
+            this.clearOrder(WIDTH, HEIGHT);
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
             // reset plate speed
             return 0;
@@ -86,29 +85,55 @@ class KitchenScene extends Scene {
         // scene.add(plate);
         // objects.push(plate);
 
-        let chocolate_cake = new ChocolateCake(20, 120, width, height);
-        this.add(chocolate_cake);
-        this.state.draggable.push(chocolate_cake);
+        this.state.order.push('plate');
 
-        let vanilla_cake = new VanillaCake(-40, 120, width, height);
-        this.add(vanilla_cake);
-        this.state.draggable.push(vanilla_cake);
+        for (let i = 0; i < 3; i++) {
+            let chocolate_cake = new ChocolateCake(-180, -220, width, height);
+            this.add(chocolate_cake);
+            this.state.draggable.push(chocolate_cake);
 
-        let strawberry = new Strawberry(97, -178, width, height);
-        this.add(strawberry);
-        this.state.draggable.push(strawberry);
+            let vanilla_cake = new VanillaCake(-180, -160, width, height);
+            this.add(vanilla_cake);
+            this.state.draggable.push(vanilla_cake);
 
-        let matcha_frosting = new MatchaFrosting(10, -143, width, height);
-        this.add(matcha_frosting);
-        this.state.draggable.push(matcha_frosting);
+            let matcha_frosting = new MatchaFrosting(15, -143, width, height);
+            this.add(matcha_frosting);
+            this.state.draggable.push(matcha_frosting);
 
-        let candles = new Candles(132, -178, width, height);
-        this.add(candles);
-        this.state.draggable.push(candles);
+            let chocolate_frosting = new ChocolateFrosting(15, -175, width, height);
+            this.add(chocolate_frosting);
+            this.state.draggable.push(chocolate_frosting);
 
-        let sprinkles = new Sprinkles(188, -178, width, height);
-        this.add(sprinkles);
-        this.state.draggable.push(sprinkles);
+            let strawberry_frosting = new StrawberryFrosting(15, -215, width, height);
+            this.add(strawberry_frosting);
+            this.state.draggable.push(strawberry_frosting);
+
+            let sprinkles = new Sprinkles(270, -178, width, height);
+            this.add(sprinkles);
+            this.state.draggable.push(sprinkles);
+
+            let candles = new Candles(198, -178, width, height);
+            this.add(candles);
+            this.state.draggable.push(candles);
+
+            let strawberry = new Strawberry(144, -178, width, height);
+            this.add(strawberry);
+            this.state.draggable.push(strawberry);
+        }
+    }
+
+    clearOrder(width, height) {
+        const map = new THREE.TextureLoader().load('src/assets/plate.png');
+        let material = new THREE.SpriteMaterial({ map: map });
+        this.state.updateList[0].children[0].material = material;
+        this.state.updateList[0].children[0].material.needsUpdate = true;
+        this.state.updateList[0].children[0].scale.set(width * 0.1, height * 0.1, 1);
+        this.state.updateList[0].children[0].scale.needsUpdate = true;
+        this.state.updateList[0].children[0].position.y -= 10;
+        this.state.updateList[0].type = "plate";
+        
+        this.state.updateList = this.state.updateList.splice(0, 1);
+        this.state.order = ["plate"];
     }
 
     addOrder(width, height) {
@@ -128,9 +153,9 @@ class KitchenScene extends Scene {
                 this.remove(obj);
                 break;
             }
-        }  
+        }
         let file;
-        if (value == START) { 
+        if (value == START) {
             file = 'src/assets/start.png'
         }
         else if (value == INSTR) {
@@ -140,11 +165,11 @@ class KitchenScene extends Scene {
             return;
         }
 
-        const map = new THREE.TextureLoader().load( file );
+        const map = new THREE.TextureLoader().load(file);
         map.minfilter = THREE.LinearMipMapLinearFilter
-        const material = new THREE.SpriteMaterial( { map: map } );
-        const sprite = new THREE.Sprite( material );
-        sprite.scale.set( width* 0.2, height* 0.24, 1 );
+        const material = new THREE.SpriteMaterial({ map: map });
+        const sprite = new THREE.Sprite(material);
+        sprite.scale.set(width * 0.2, height * 0.24, 1);
         sprite.position.z = -1;
         sprite.type = "overlay";
         this.add(sprite);

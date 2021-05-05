@@ -6,7 +6,7 @@ class VanillaCake extends Group {
         // Call parent Group() constructor
         super();
 
-        this.name = 'vanilla_cake';
+        this.name = 'yellow_cake';
         this.type = 'base';
 
         const map = new THREE.TextureLoader().load( 'src/assets/ingredients/cake/yellow_cake.png' );
