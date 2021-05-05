@@ -28,7 +28,7 @@ class KitchenScene extends Scene {
         // // const lights = new BasicLights();
         // this.add(lights);
 
-        let map = new THREE.TextureLoader().load('src/assets/background3.png');
+        let map = new THREE.TextureLoader().load( 'src/assets/bg_with_menu.png' );
         map.minfilter = THREE.LinearMipMapLinearFilter
         let material = new THREE.SpriteMaterial({ map: map });
         let sprite = new THREE.Sprite(material);
@@ -134,6 +134,17 @@ class KitchenScene extends Scene {
         
         this.state.updateList = this.state.updateList.splice(0, 1);
         this.state.order = ["plate"];
+    }
+
+    addOrder(width, height) {
+        let map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_yc.png' );
+        let material = new THREE.SpriteMaterial( { map: map } );
+        let sprite = new THREE.Sprite( material );
+        sprite.scale.set( width * 0.06, height * 0.06, 1 );
+        sprite.position.x = -250;
+        sprite.position.y = 70;
+        sprite.position.z = -1;
+        this.add(sprite);
     }
 
     toggleOverlay(width, height, value) {
