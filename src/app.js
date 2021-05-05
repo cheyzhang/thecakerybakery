@@ -288,7 +288,7 @@ function setSceneOpacity(value) {
 }
 
 // generate a new random order
-function randOrder(level) {
+function randOrder() {
     const BASES = ['yellow_cake', 'chocolate_cake'];
     const FROSTINGS = ['chocolate_frosting', 'matcha_frosting', 'strawberry_frosting'];
     const TOPPINGS = ['strawberry', 'candles', 'sprinkles'];
@@ -302,6 +302,22 @@ function randOrder(level) {
     }
     curr_order = order;
     console.log("CURR ORDER: " + order);
+
+    let file_path = 'src/assets/ingredients/cake_combos/p_'; 
+    for (let i = 0; i < order.length; i++) {
+        file_path += FILE_MAP[order[i]]; 
+        if (i != order.length -1) {
+            file_path += "_"; 
+        }
+    }
+    file_path += ".png"; 
+    console.log(file_path)
+
+    const map = new THREE.TextureLoader().load(file_path);
+    let material = new THREE.SpriteMaterial({ map: map });
+    scene.state.menu[0].material = material;
+    scene.state.menu[0].material.needsUpdate = true;
+
 }
 
 // check if order is correct and update score/lives

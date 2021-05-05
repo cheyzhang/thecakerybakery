@@ -17,7 +17,8 @@ class KitchenScene extends Scene {
             rotationSpeed: 0,
             updateList: [],
             draggable: [],
-            order: []
+            order: [],
+            menu: []
         };
 
         // Set background to a nice color
@@ -137,7 +138,7 @@ class KitchenScene extends Scene {
     }
 
     addOrder(width, height) {
-        let map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_yc.png' );
+        let map = new THREE.TextureLoader().load( 'src/assets/ingredients/cake_combos/p_yc.png' );
         let material = new THREE.SpriteMaterial( { map: map } );
         let sprite = new THREE.Sprite( material );
         sprite.scale.set( width * 0.06, height * 0.06, 1 );
@@ -145,6 +146,7 @@ class KitchenScene extends Scene {
         sprite.position.y = 70;
         sprite.position.z = -1;
         this.add(sprite);
+        this.state.menu.push(sprite);
     }
 
     toggleOverlay(width, height, value) {
