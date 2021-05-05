@@ -110,7 +110,7 @@ controls.addEventListener('dragend', function (event) {
     let obj_pos = event.object.position;
     // console.log(event.object.parent.type);
     if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
-        console.log(scene.state.updateList[0]);
+        // console.log(scene.state.updateList[0]);
         // if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
         // uncomment below line for topping on toppings
         // if (scene.state.updateList[0].type == 'plate' && event.object.parent.type == 'base' || scene.state.updateList[0].type == 'base' && event.object.parent.type == 'frosting' || scene.state.updateList[0].type == 'frosting' && event.object.parent.type == 'topping' || scene.state.updateList[0].type == 'topping' && event.object.parent.type == 'topping') {
@@ -120,11 +120,11 @@ controls.addEventListener('dragend', function (event) {
             // scene.state.updateList.push(event.object.parent);
             // remove the new obj which has correctly been added
             scene.remove(event.object.parent);
-            console.log(scene.state.order);
+            // console.log(scene.state.order);
             scene.state.order.push(new_name);
             let file_path = "";
             for (let i = 0; i < scene.state.order.length; i++) {
-                console.log(scene.state.order[i]);
+                // console.log(scene.state.order[i]);
                 file_path += FILE_MAP[scene.state.order[i]] + "_";
             }
             file_path = 'src/assets/ingredients/cake_combos/' + file_path.substring(0, file_path.length - 1) + ".png"
@@ -174,7 +174,10 @@ const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20 && playing == PLAYING) {
         if (scene.update(timeStamp, step_size, WIDTH, HEIGHT) == 0) {
             // console.log('resetting step size');
-            step_size = 2;
+            // step_size = 2;
+            if (!scene.state.submitted) {
+                submitOrder(2);
+            }
         }
     }
     renderer.render(scene, camera);
@@ -231,7 +234,9 @@ window.addEventListener('keydown', function (event) {
     // submit cake
     if (event.key == 's') {
         if (playing == PLAYING) {
-            submitOrder();
+            if (!scene.state.submitted) {
+                submitOrder(30);
+            }
         }
     }
 
@@ -282,6 +287,7 @@ function setSceneOpacity(value) {
             // pass
         }
         else {
+            // may need to modify this like / n where n is the # of cakes
             obj.children[0].material.opacity = value;
         }
     }
@@ -302,10 +308,13 @@ function randOrder(level) {
     }
     curr_order = order;
     console.log("CURR ORDER: " + order);
+    scene.state.submitted = false;
 }
 
 // check if order is correct and update score/lives
-function submitOrder() {
+function submitOrder(newStepSize) {
+    scene.addIngredientLayer();
+    scene.state.submitted = true;
     const attempted_order = [...scene.state.order];
     attempted_order.splice(0, 1);
     const len = curr_order.length;
@@ -316,14 +325,14 @@ function submitOrder() {
             lives -= 1;
             wrong.play();
             randOrder();
-            step_size = 30;
+            step_size = newStepSize;
             console.log("you lost a life");
             return;
         }
     }
     score += level * 100;
     correct.play();
-    step_size = 30;
+    step_size = newStepSize;
     console.log("CURR SCORE: " + score);
     randOrder();
 }

@@ -17,7 +17,8 @@ class KitchenScene extends Scene {
             rotationSpeed: 0,
             updateList: [],
             draggable: [],
-            order: []
+            order: [],
+            submitted: false
         };
 
         // Set background to a nice color
@@ -28,7 +29,7 @@ class KitchenScene extends Scene {
         // // const lights = new BasicLights();
         // this.add(lights);
 
-        let map = new THREE.TextureLoader().load( 'src/assets/bg_with_menu.png' );
+        let map = new THREE.TextureLoader().load('src/assets/bg_with_menu.png');
         map.minfilter = THREE.LinearMipMapLinearFilter
         let material = new THREE.SpriteMaterial({ map: map });
         let sprite = new THREE.Sprite(material);
@@ -66,7 +67,9 @@ class KitchenScene extends Scene {
         // console.log(this.state.updateList[0].children.x);
         if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
             this.clearOrder(WIDTH, HEIGHT);
+            this.state.submitted = true;
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
+            this.state.submitted = false;
             // reset plate speed
             return 0;
         }
@@ -87,39 +90,44 @@ class KitchenScene extends Scene {
 
         this.state.order.push('plate');
 
-        for (let i = 0; i < 3; i++) {
-            let chocolate_cake = new ChocolateCake(-180, -220, width, height);
-            this.add(chocolate_cake);
-            this.state.draggable.push(chocolate_cake);
-
-            let vanilla_cake = new VanillaCake(-180, -160, width, height);
-            this.add(vanilla_cake);
-            this.state.draggable.push(vanilla_cake);
-
-            let matcha_frosting = new MatchaFrosting(15, -143, width, height);
-            this.add(matcha_frosting);
-            this.state.draggable.push(matcha_frosting);
-
-            let chocolate_frosting = new ChocolateFrosting(15, -175, width, height);
-            this.add(chocolate_frosting);
-            this.state.draggable.push(chocolate_frosting);
-
-            let strawberry_frosting = new StrawberryFrosting(15, -215, width, height);
-            this.add(strawberry_frosting);
-            this.state.draggable.push(strawberry_frosting);
-
-            let sprinkles = new Sprinkles(270, -178, width, height);
-            this.add(sprinkles);
-            this.state.draggable.push(sprinkles);
-
-            let candles = new Candles(198, -178, width, height);
-            this.add(candles);
-            this.state.draggable.push(candles);
-
-            let strawberry = new Strawberry(144, -178, width, height);
-            this.add(strawberry);
-            this.state.draggable.push(strawberry);
+        for (let i = 0; i < 2; i++) {
+            this.addIngredientLayer(width, height);
         }
+    }
+
+    // adds a layer of ingredients....as the game goes on there will be too many. modify later.
+    addIngredientLayer(width, height) {
+        let chocolate_cake = new ChocolateCake(-180, -220, width, height);
+        this.add(chocolate_cake);
+        this.state.draggable.push(chocolate_cake);
+
+        let vanilla_cake = new VanillaCake(-180, -160, width, height);
+        this.add(vanilla_cake);
+        this.state.draggable.push(vanilla_cake);
+
+        let matcha_frosting = new MatchaFrosting(15, -143, width, height);
+        this.add(matcha_frosting);
+        this.state.draggable.push(matcha_frosting);
+
+        let chocolate_frosting = new ChocolateFrosting(15, -175, width, height);
+        this.add(chocolate_frosting);
+        this.state.draggable.push(chocolate_frosting);
+
+        let strawberry_frosting = new StrawberryFrosting(15, -215, width, height);
+        this.add(strawberry_frosting);
+        this.state.draggable.push(strawberry_frosting);
+
+        let sprinkles = new Sprinkles(270, -178, width, height);
+        this.add(sprinkles);
+        this.state.draggable.push(sprinkles);
+
+        let candles = new Candles(198, -178, width, height);
+        this.add(candles);
+        this.state.draggable.push(candles);
+
+        let strawberry = new Strawberry(144, -178, width, height);
+        this.add(strawberry);
+        this.state.draggable.push(strawberry);
     }
 
     clearOrder(width, height) {
@@ -131,16 +139,16 @@ class KitchenScene extends Scene {
         this.state.updateList[0].children[0].scale.needsUpdate = true;
         this.state.updateList[0].children[0].position.y -= 10;
         this.state.updateList[0].type = "plate";
-        
+
         this.state.updateList = this.state.updateList.splice(0, 1);
         this.state.order = ["plate"];
     }
 
     addOrder(width, height) {
-        let map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_yc.png' );
-        let material = new THREE.SpriteMaterial( { map: map } );
-        let sprite = new THREE.Sprite( material );
-        sprite.scale.set( width * 0.06, height * 0.06, 1 );
+        let map = new THREE.TextureLoader().load('src/assets/ingredients/cake_combos/p_yc.png');
+        let material = new THREE.SpriteMaterial({ map: map });
+        let sprite = new THREE.Sprite(material);
+        sprite.scale.set(width * 0.06, height * 0.06, 1);
         sprite.position.x = -250;
         sprite.position.y = 70;
         sprite.position.z = -1;
