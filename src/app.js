@@ -16,6 +16,7 @@ import WrongFile from './assets/sfx/wrong.wav';
 import StartFile from './assets/sfx/start.wav';
 import PauseFile from './assets/sfx/pause.wav';
 import ErrorFile from './assets/sfx/error.wav';
+import GameOverFile from './assets/sfx/game_over.wav';
 
 // Variables
 let WIDTH = window.innerWidth;
@@ -24,7 +25,7 @@ let score = 0;
 let lives = 3;
 let level = 1;
 let curr_order;
-const DEFAULT_STEP_SIZE = 3;
+const DEFAULT_STEP_SIZE = 4;
 const FAST_STEP_SIZE = 40;
 let step_size = DEFAULT_STEP_SIZE;
 // let total_num_orders = 0;
@@ -33,13 +34,16 @@ let step_size = DEFAULT_STEP_SIZE;
 const NOT_STARTED = 0;
 const PAUSED = 1;
 const PLAYING = 2;
+const GAME_OVER = 3;
 let playing = NOT_STARTED;
 
 // for overlay
 const START = 0;
 const INSTR = 1;
 const CONTROLS = 2;
-const NONE = 3;
+const PAUSED_TITLE = 3;
+const GAME_OVER_TITLE = 4;
+const NONE = 5;
 
 // mapping to cake combo files
 const FILE_MAP = {
@@ -61,6 +65,7 @@ const pause = new Audio(PauseFile);
 const error = new Audio(ErrorFile);
 const correct = new Audio(CorrectFile);
 const wrong = new Audio(WrongFile);
+const game_over_audio = new Audio(GameOverFile);
 
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
@@ -177,14 +182,15 @@ controls.deactivate();
 const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20 && playing == PLAYING) {
         scene.update(timeStamp, step_size, WIDTH, HEIGHT);
-        if (scene.state.atEnd && !scene.state.submitted) {
-            // console.log("AT END AND NOT SUBMITTED");
-            submitOrder(DEFAULT_STEP_SIZE);
-        }
-        else if (scene.state.atEnd && scene.state.submitted) {
-            // console.log("AT END AND SUBMITTED");
-            scene.state.submitted = false;
-            step_size = DEFAULT_STEP_SIZE;
+        if (scene.state.atEnd) {
+            if (scene.state.submitted) {
+                scene.state.submitted = false;
+                step_size = DEFAULT_STEP_SIZE;
+            }
+            else {
+                submitOrder(DEFAULT_STEP_SIZE);
+            }
+            randOrder();
         }
     }
     renderer.render(scene, camera);
@@ -212,6 +218,9 @@ window.addEventListener('keydown', function (event) {
         }
         else if (playing == PAUSED) {
             restartGame();
+        }
+        else if (playing == GAME_OVER) {
+            window.location.reload();
         }
         else {
             pauseGame();
@@ -252,7 +261,7 @@ window.addEventListener('keydown', function (event) {
     if (event.key == 's') {
         if (playing == PLAYING) {
             if (!scene.state.submitted) {
-                submitOrder(30);
+                submitOrder(FAST_STEP_SIZE);
             }
         }
     }
@@ -283,6 +292,7 @@ function pauseGame() {
     playing = PAUSED;
     pause.play();
     setSceneOpacity(0.5);
+    scene.toggleOverlay(WIDTH, HEIGHT, PAUSED_TITLE);
     controls.deactivate();
 }
 
@@ -291,30 +301,53 @@ function restartGame() {
     playing = PLAYING;
     start.play();
     setSceneOpacity(1);
+    scene.toggleOverlay(WIDTH, HEIGHT, NONE);
     controls.activate();
+}
+
+function endGame() {
+    playing = GAME_OVER;
+    const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
+    let material = new THREE.SpriteMaterial({ map: map });
+    scene.state.menu[0].material = material;
+    scene.state.menu[0].material.needsUpdate = true;
+    scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
+    scene.state.menu[0].scale.needsUpdate = true;
+    setSceneOpacity(0.5);
+    scene.toggleOverlay(WIDTH, HEIGHT, GAME_OVER_TITLE);
+    controls.deactivate();
+    game_over_audio.play();
 }
 
 // set the opacity of all objects in scene
 function setSceneOpacity(value) {
     for (const obj of scene.children) {
+        // background?
         if (obj.type == "Sprite") {
             obj.material.opacity = value;
         }
+        // overlay
         else if (obj.type == "overlay") {
             // pass
         }
+        // ingredients
         else {
-            // may need to modify this like / n where n is the # of cakes
-            obj.children[0].material.opacity = value;
+            // there should be 2 of each ingredient at all times
+            if (value != 1) {
+                obj.children[0].material.opacity = value / 2;
+            }
+            else {
+                obj.children[0].material.opacity = value;
+            }
         }
     }
 }
 
 // generate a new random order
 function randOrder() {
-    const BASES = ['yellow_cake', 'chocolate_cake'];
+    const BASES = ['chocolate_cake', 'yellow_cake'];
     const FROSTINGS = ['chocolate_frosting', 'matcha_frosting', 'strawberry_frosting'];
-    const TOPPINGS = ['strawberry', 'candles', 'sprinkles'];
+    const TOPPINGS = ['candles', 'sprinkles', 'strawberry'];
     let order = [];
     order.push(BASES[Math.floor(Math.random() * 2)]);
     if (level >= 2) {
@@ -340,36 +373,51 @@ function randOrder() {
     let material = new THREE.SpriteMaterial({ map: map });
     scene.state.menu[0].material = material;
     scene.state.menu[0].material.needsUpdate = true;
-
+    scene.state.menu[0].scale.set(WIDTH * 0.06, HEIGHT * 0.06, 1);
+    scene.state.menu[0].scale.needsUpdate = true;
 }
 
 // check if order is correct and update score/lives
 function submitOrder(newStepSize) {
-    scene.addIngredientLayer();
     scene.state.submitted = true;
     // total_num_orders += 1;
     const attempted_order = [...scene.state.order];
     attempted_order.splice(0, 1);
+    scene.replenishIngredients(WIDTH, HEIGHT, attempted_order);
     const len = curr_order.length;
     for (let i = 0; i < len; i++) {
         // console.log(curr_order[i]);
         // console.log(attempted_order[i]);
         if (curr_order[i] != attempted_order[i]) {
-            // INSERT CODE TO MAKE ORDER BOARD A RED X
             lives -= 1;
             wrong.play();
-            randOrder();
+            const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
+            let material = new THREE.SpriteMaterial({ map: map });
+            scene.state.menu[0].material = material;
+            scene.state.menu[0].material.needsUpdate = true;
+            scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
+            scene.state.menu[0].scale.needsUpdate = true;
+            // randOrder();
             step_size = newStepSize;
             console.log("you lost a life");
+            if (lives == 0) {
+                endGame();
+            }
             return;
         }
     }
-    // INSERT CODE TO MAKE ORDER BOARD A GREEN CHECKMARK
     score += level * 100;
     correct.play();
     step_size = newStepSize;
     console.log("CURR SCORE: " + score);
-    randOrder();
+
+    const map = new THREE.TextureLoader().load('src/assets/results/correct.png');
+    let material = new THREE.SpriteMaterial({ map: map });
+    scene.state.menu[0].material = material;
+    scene.state.menu[0].material.needsUpdate = true;
+    scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
+    scene.state.menu[0].scale.needsUpdate = true;
+    // randOrder();
 }
 
 let scoreDiv = document.createElement('div');

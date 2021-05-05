@@ -6,7 +6,19 @@ import { Plate, ChocolateCake, VanillaCake, ChocolateFrosting, MatchaFrosting, S
 const START = 0;
 const INSTR = 1;
 const CONTROLS = 2;
-const NONE = 3;
+const PAUSED_TITLE = 3;
+const GAME_OVER_TITLE = 4;
+const NONE = 5;
+
+const ALL_INGREDIENTS = [
+    'chocolate_cake',
+    'yellow_cake',
+    'chocolate_frosting',
+    'matcha_frosting',
+    'strawberry_frosting',
+    'strawberry',
+    'candles',
+    'sprinkles'];
 
 class KitchenScene extends Scene {
     constructor(width, height) {
@@ -15,23 +27,18 @@ class KitchenScene extends Scene {
 
         // Init state
         this.state = {
-            rotationSpeed: 0,
             updateList: [],
             draggable: [],
             order: [],
             atEnd: false,
-            submitted: false, // 0 = not submitted, 1 = submitted but moving along still, 2
+            submitted: false, 
             menu: []
         };
 
         // Set background to a nice color
         this.background = new Color(0xE8D4E2);
 
-        // Add meshes to scene
-        // const lights = new DimLights();
-        // // const lights = new BasicLights();
-        // this.add(lights);
-
+        // add background
         let map = new THREE.TextureLoader().load('src/assets/bg_with_menu.png');
         map.minfilter = THREE.LinearMipMapLinearFilter
         let material = new THREE.SpriteMaterial({ map: map });
@@ -39,26 +46,11 @@ class KitchenScene extends Scene {
         console.log(sprite);;
         let aspectRatio = width / height;
         sprite.scale.set(width * 0.57, height * 0.58, 1);
-        // sprite.scale.set(width * 0.57, height * 0.58, 1);
         sprite.position.z = -1;
         this.add(sprite);
 
+        // add start screen
         this.toggleOverlay(width, height, START);
-
-        // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
-        // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
-        // const planeMaterial = new THREE.MeshLambertMaterial({
-        //     map: texture
-        // });
-        // const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        // // const plane = new THREE.Mesh(planeGeometry);
-        // plane.position.z = 100;
-        // plane.receiveShadow = true;
-        // plane.matrixAutoUpdate = false;
-        // this.add(plane);
-
-        // Populate GUI
-        // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
     }
 
     addToUpdateList(object) {
@@ -91,43 +83,42 @@ class KitchenScene extends Scene {
         this.state.order.push('plate');
 
         for (let i = 0; i < 2; i++) {
-            this.addIngredientLayer(width, height);
+            this.replenishIngredients(width, height, ALL_INGREDIENTS);
         }
     }
 
-    // adds a layer of ingredients....as the game goes on there will be too many. modify later.
-    addIngredientLayer(width, height) {
-        let chocolate_cake = new ChocolateCake(-180, -220, width, height);
-        this.add(chocolate_cake);
-        this.state.draggable.push(chocolate_cake);
-
-        let vanilla_cake = new VanillaCake(-180, -160, width, height);
-        this.add(vanilla_cake);
-        this.state.draggable.push(vanilla_cake);
-
-        let matcha_frosting = new MatchaFrosting(15, -143, width, height);
-        this.add(matcha_frosting);
-        this.state.draggable.push(matcha_frosting);
-
-        let chocolate_frosting = new ChocolateFrosting(15, -175, width, height);
-        this.add(chocolate_frosting);
-        this.state.draggable.push(chocolate_frosting);
-
-        let strawberry_frosting = new StrawberryFrosting(15, -215, width, height);
-        this.add(strawberry_frosting);
-        this.state.draggable.push(strawberry_frosting);
-
-        let sprinkles = new Sprinkles(270, -178, width, height);
-        this.add(sprinkles);
-        this.state.draggable.push(sprinkles);
-
-        let candles = new Candles(198, -178, width, height);
-        this.add(candles);
-        this.state.draggable.push(candles);
-
-        let strawberry = new Strawberry(144, -178, width, height);
-        this.add(strawberry);
-        this.state.draggable.push(strawberry);
+    replenishIngredients(width, height, ingredients) {
+        let new_item;
+        for (const item of ingredients) {
+            switch (item) {
+                case ALL_INGREDIENTS[0]:
+                    new_item = new ChocolateCake(-180, -220, width, height);
+                    break;
+                case ALL_INGREDIENTS[1]:
+                    new_item = new VanillaCake(-180, -160, width, height);
+                    break;
+                case ALL_INGREDIENTS[2]:
+                    new_item = new MatchaFrosting(15, -143, width, height);
+                    break;
+                case ALL_INGREDIENTS[3]:
+                    new_item = new ChocolateFrosting(15, -175, width, height);
+                    break;
+                case ALL_INGREDIENTS[4]:
+                    new_item = new StrawberryFrosting(15, -215, width, height);
+                    break;
+                case ALL_INGREDIENTS[5]:
+                    new_item = new Sprinkles(270, -178, width, height);
+                    break;
+                case ALL_INGREDIENTS[6]:
+                    new_item = new Candles(198, -178, width, height);
+                    break;
+                case ALL_INGREDIENTS[7]:
+                    new_item = new Strawberry(144, -178, width, height);
+                    break;
+            }
+            this.add(new_item);
+            this.state.draggable.push(new_item);
+        }
     }
 
     clearOrder(width, height) {
@@ -135,11 +126,12 @@ class KitchenScene extends Scene {
         let material = new THREE.SpriteMaterial({ map: map });
         this.state.updateList[0].children[0].material = material;
         this.state.updateList[0].children[0].material.needsUpdate = true;
-        this.state.updateList[0].children[0].scale.set(width * 0.1, height * 0.1, 1);
-        this.state.updateList[0].children[0].scale.needsUpdate = true;
-        this.state.updateList[0].children[0].position.y -= 10;
+        if (this.state.updateList[0].type != "plate") {
+            this.state.updateList[0].children[0].position.y -= 10;
+            this.state.updateList[0].children[0].scale.set(width * 0.08, height * 0.08, 1);
+            this.state.updateList[0].children[0].scale.needsUpdate = true;
+        }
         this.state.updateList[0].type = "plate";
-
         this.state.updateList = this.state.updateList.splice(0, 1);
         this.state.order = ["plate"];
     }
@@ -156,6 +148,7 @@ class KitchenScene extends Scene {
         this.state.menu.push(sprite);
     }
 
+    // toggle the title screens
     toggleOverlay(width, height, value) {
         for (const obj of this.children) {
             if (obj.type == "overlay") {
@@ -163,18 +156,28 @@ class KitchenScene extends Scene {
                 break;
             }
         }
+        // console.log(this.children);
         let file;
-        if (value == START) {
-            file = 'src/assets/overlays/welcome_page.png'
-        }
-        else if (value == INSTR) {
-            file = 'src/assets/overlays/instructions.png';
-        }
-        else if (value == CONTROLS) {
-            file = 'src/assets/overlays/controls.png';
-        }
-        else if (value == NONE) {
-            return;
+        switch (value) {
+            case START:
+                file = 'src/assets/overlays/welcome_page.png';
+                break;
+            case INSTR:
+                file = 'src/assets/overlays/instructions.png';
+                break;
+            case CONTROLS:
+                file = 'src/assets/overlays/controls.png';
+                break;
+            case PAUSED_TITLE:
+                file = 'src/assets/overlays/paused.png';
+                break;
+            case GAME_OVER_TITLE:
+                file = 'src/assets/overlays/game_over.png';
+                break;
+            case NONE:
+                return;
+            default:
+                return;
         }
 
         const map = new THREE.TextureLoader().load(file);
@@ -182,7 +185,7 @@ class KitchenScene extends Scene {
         const material = new THREE.SpriteMaterial({ map: map });
         const sprite = new THREE.Sprite(material);
         sprite.scale.set(width * 0.2, height * 0.24, 1);
-        sprite.position.z = -1;
+        sprite.position.z = 0;
         sprite.type = "overlay";
         this.add(sprite);
     }
