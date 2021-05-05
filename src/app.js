@@ -322,6 +322,19 @@ function startGame() {
     level_text.style.color = "#E9967A";
     level_text.id = "level_text"
     document.body.appendChild(level_text);
+
+    var live_text = document.createElement('div');
+    live_text.style.position = 'absolute';
+    live_text.style.width = 100;
+    live_text.style.height = 100;
+    live_text.innerHTML = "Lives left: " + lives;
+    live_text.style.top = 130 + 'px';
+    live_text.style.left = 1300 + 'px';
+    live_text.style.fontFamily = 'VT323';
+    live_text.style.fontSize = 30 + 'px';
+    live_text.style.color = "#E9967A";
+    live_text.id = "live_text"
+    document.body.appendChild(live_text);
 }
 
 // pause the game
@@ -478,4 +491,5 @@ function submitOrder(newStepSize) {
 
     document.getElementById('level_text').innerHTML = 'Level: ' + level;
     document.getElementById('score_text').innerHTML = 'Score: ' + score;
+    document.getElementById('live_text').innerHTML = 'Lives left: ' + lives;
 }
