@@ -1,6 +1,12 @@
 export * from './Flower';
 export * from './Land';
+
 export * from './Plate';
-export * from './Strawberry';
 export * from './ChocolateCake';
 export * from './VanillaCake';
+export * from './ChocolateFrosting';
+export * from './MatchaFrosting';
+export * from './StrawberryFrosting';
+export * from './Strawberry';
+export * from './Candles';
+export * from './Sprinkles';

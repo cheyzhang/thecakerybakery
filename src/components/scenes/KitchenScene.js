@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
-import { Plate, Strawberry, ChocolateCake, VanillaCake } from 'objects';
+import { Plate, ChocolateCake, VanillaCake, ChocolateFrosting, MatchaFrosting, StrawberryFrosting, Candles, Sprinkles, Strawberry } from 'objects';
 // import { BasicLights, DimLights } from 'lights';
 
 const START = 0;
@@ -31,19 +31,11 @@ class KitchenScene extends Scene {
         map.minfilter = THREE.LinearMipMapLinearFilter
         let material = new THREE.SpriteMaterial( { map: map } );
         let sprite = new THREE.Sprite( material );
-        sprite.scale.set( width* 0.65, height* 0.7, 1 );
+        sprite.scale.set( width * 0.57, height * 0.58, 1 );
         sprite.position.z = -1;
         this.add(sprite);
 
         this.toggleOverlay(width, height, START);
-        // map = new THREE.TextureLoader().load( 'src/assets/start.png' );
-        // map.minfilter = THREE.LinearMipMapLinearFilter
-        // material = new THREE.SpriteMaterial( { map: map } );
-        // sprite = new THREE.Sprite( material );
-        // sprite.scale.set( width* 0.2, height* 0.24, 1 );
-        // sprite.position.z = -1;
-        // sprite.type = "start";
-        // this.add(sprite);
 
         // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
         // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
@@ -74,6 +66,7 @@ class KitchenScene extends Scene {
                     this.remove(obj);
                 }                
             }
+            this.state.updateList = this.state.updateList.splice(0, 1);
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
             // reset plate speed
             return 0;
@@ -101,9 +94,21 @@ class KitchenScene extends Scene {
         this.add(vanilla_cake);
         this.state.draggable.push(vanilla_cake);
 
-        let strawberry = new Strawberry(-43, 25, width, height);
+        let strawberry = new Strawberry(97, -178, width, height);
         this.add(strawberry);
         this.state.draggable.push(strawberry);
+
+        let matcha_frosting = new MatchaFrosting(10, -143, width, height);
+        this.add(matcha_frosting);
+        this.state.draggable.push(matcha_frosting);
+
+        let candles = new Candles(132, -178, width, height);
+        this.add(candles);
+        this.state.draggable.push(candles);
+
+        let sprinkles = new Sprinkles(188, -178, width, height);
+        this.add(sprinkles);
+        this.state.draggable.push(sprinkles);
     }
 
     toggleOverlay(width, height, value) {

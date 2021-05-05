@@ -90,8 +90,8 @@ controls.addEventListener('dragstart', function (event) {
 // on drag end
 controls.addEventListener('dragend', function (event) {
     event.object.material.opacity = 1;
-    // console.log(event.object.position.x);
-    // console.log(event.object.position.y);
+    console.log(event.object.position.x);
+    console.log(event.object.position.y);
     let plate_pos = scene.state.updateList[0].children[0].position;
     let obj_pos = event.object.position;
     if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {

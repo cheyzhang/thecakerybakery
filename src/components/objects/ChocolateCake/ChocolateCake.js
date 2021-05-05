@@ -9,7 +9,7 @@ class ChocolateCake extends Group {
         this.name = 'chocolate_cake';
         this.type = 'base';
 
-        const map = new THREE.TextureLoader().load( 'src/assets/ingredients/just_cake/chocolate_cake.png' );
+        const map = new THREE.TextureLoader().load( 'src/assets/ingredients/cake/chocolate_cake.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
