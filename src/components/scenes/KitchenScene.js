@@ -16,9 +16,9 @@ const ALL_INGREDIENTS = [
     'chocolate_frosting',
     'matcha_frosting',
     'strawberry_frosting',
-    'strawberry',
     'candles',
-    'sprinkles'];
+    'sprinkles',
+    'strawberry',];
 
 class KitchenScene extends Scene {
     constructor(width, height) {
@@ -98,19 +98,19 @@ class KitchenScene extends Scene {
                     new_item = new VanillaCake(-180, -160, width, height);
                     break;
                 case ALL_INGREDIENTS[2]:
-                    new_item = new MatchaFrosting(15, -143, width, height);
+                    new_item = new ChocolateFrosting(15, -175, width, height);
                     break;
                 case ALL_INGREDIENTS[3]:
-                    new_item = new ChocolateFrosting(15, -175, width, height);
+                    new_item = new MatchaFrosting(15, -143, width, height);
                     break;
                 case ALL_INGREDIENTS[4]:
                     new_item = new StrawberryFrosting(15, -215, width, height);
                     break;
                 case ALL_INGREDIENTS[5]:
-                    new_item = new Sprinkles(270, -178, width, height);
+                    new_item = new Candles(198, -178, width, height);
                     break;
                 case ALL_INGREDIENTS[6]:
-                    new_item = new Candles(198, -178, width, height);
+                    new_item = new Sprinkles(270, -178, width, height);
                     break;
                 case ALL_INGREDIENTS[7]:
                     new_item = new Strawberry(144, -178, width, height);

@@ -7,7 +7,7 @@
  *
  */
 import * as THREE from 'three';
-import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster, FontLoader, TextGeometry, DataTexture3D} from 'three';
+import { WebGLRenderer, OrthographicCamera, Vector3, Group, Raycaster, FontLoader, TextGeometry, DataTexture3D } from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { KitchenScene } from 'scenes';
 import BlipFile from './assets/sfx/blip.wav';
@@ -17,6 +17,7 @@ import StartFile from './assets/sfx/start.wav';
 import PauseFile from './assets/sfx/pause.wav';
 import ErrorFile from './assets/sfx/error.wav';
 import GameOverFile from './assets/sfx/game_over.wav';
+import LevelUpFile from './assets/sfx/level_up.wav';
 
 // Variables
 let WIDTH = window.innerWidth;
@@ -25,8 +26,8 @@ let score = 0;
 let lives = 3;
 let level = 1;
 let curr_order;
-const DEFAULT_STEP_SIZE = 4;
-const FAST_STEP_SIZE = 40;
+let DEFAULT_STEP_SIZE = 4;
+const SUBMITTED_STEP_SIZE = 50;
 let step_size = DEFAULT_STEP_SIZE;
 // let total_num_orders = 0;
 
@@ -66,6 +67,7 @@ const error = new Audio(ErrorFile);
 const correct = new Audio(CorrectFile);
 const wrong = new Audio(WrongFile);
 const game_over_audio = new Audio(GameOverFile);
+const level_up = new Audio(LevelUpFile);
 
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
@@ -270,7 +272,7 @@ window.addEventListener('keydown', function (event) {
     if (event.key == 's') {
         if (playing == PLAYING) {
             if (!scene.state.submitted) {
-                submitOrder(FAST_STEP_SIZE);
+                submitOrder(SUBMITTED_STEP_SIZE);
             }
         }
     }
@@ -376,6 +378,9 @@ function setSceneOpacity(value) {
             }
         }
     }
+    for (const menu of scene.state.menu) {
+        menu.material.opacity = value;
+    }
 }
 
 // generate a new random order
@@ -424,6 +429,7 @@ function submitOrder(newStepSize) {
         // console.log(curr_order[i]);
         // console.log(attempted_order[i]);
         if (curr_order[i] != attempted_order[i]) {
+            // INCORRECT ORDER
             lives -= 1;
             wrong.play();
             const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
@@ -432,19 +438,36 @@ function submitOrder(newStepSize) {
             scene.state.menu[0].material.needsUpdate = true;
             scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
             scene.state.menu[0].scale.needsUpdate = true;
-            // randOrder();
             step_size = newStepSize;
-            console.log("you lost a life");
             if (lives == 0) {
                 endGame();
             }
             return;
         }
     }
-    score += level * 100;
+    // CORRECT ORDER
+    score += 100;
+    if (level == 1 && score >= 400) {
+        level = 2;
+        level_up.play();
+    }
+    else if (level == 2) {
+        if (score >= 1000) {
+            level = 3;
+            DEFAULT_STEP_SIZE = 7;
+            level_up.play();
+        }
+        else {
+            DEFAULT_STEP_SIZE += 1;
+        }
+    }
+    else if (level == 3) {
+        DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 1;
+        console.log(DEFAULT_STEP_SIZE);
+    }
+    // add level 4 for multiple toppings?
     correct.play();
     step_size = newStepSize;
-    console.log("CURR SCORE: " + score);
 
     const map = new THREE.TextureLoader().load('src/assets/results/correct.png');
     let material = new THREE.SpriteMaterial({ map: map });
@@ -452,7 +475,6 @@ function submitOrder(newStepSize) {
     scene.state.menu[0].material.needsUpdate = true;
     scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
     scene.state.menu[0].scale.needsUpdate = true;
-    // randOrder();
 
     document.getElementById('level_text').innerHTML = 'Level: ' + level;
     document.getElementById('score_text').innerHTML = 'Score: ' + score;
