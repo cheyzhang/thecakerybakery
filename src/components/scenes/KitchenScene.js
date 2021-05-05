@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial } from 'three';
+import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial, FontLoader, TextGeometry } from 'three';
 import { Plate, ChocolateCake, VanillaCake, ChocolateFrosting, MatchaFrosting, StrawberryFrosting, Candles, Sprinkles, Strawberry } from 'objects';
 // import { BasicLights, DimLights } from 'lights';
 
@@ -44,6 +44,34 @@ class KitchenScene extends Scene {
         this.add(sprite);
 
         this.toggleOverlay(width, height, START);
+
+        // var mesh; 
+        // var loader = new THREE.FontLoader();
+        // loader.load( 'src/assets/fonts/Dogica_Regular.json', function ( font ) {
+
+        //     var textGeometry = new THREE.TextGeometry( "text", {
+
+        //         font: font,
+
+        //         size: 50,
+        //         height: 10,
+        //         curveSegments: 12,
+
+        //         bevelThickness: 1,
+        //         bevelSize: 1,
+        //         bevelEnabled: true
+
+        //     });
+
+        //     var textMaterial = new THREE.MeshPhongMaterial( 
+        //         { color: 0xff0000, specular: 0xffffff }
+        //     );
+
+        //     mesh = new THREE.Mesh( textGeometry, textMaterial );
+
+        // }); 
+
+        // this.add( mesh );
 
         // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
         // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
