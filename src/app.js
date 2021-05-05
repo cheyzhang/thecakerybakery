@@ -205,6 +205,7 @@ function startGame() {
     controls.activate();
 
     scene.addIngredients(WIDTH, HEIGHT);
+    scene.addOrder(WIDTH, HEIGHT);
     setSceneOpacity(1);
     scene.toggleOverlay(WIDTH, HEIGHT, NONE);
     randOrder();
