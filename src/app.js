@@ -24,7 +24,10 @@ let score = 0;
 let lives = 3;
 let level = 1;
 let curr_order;
-let step_size = 3;
+const DEFAULT_STEP_SIZE = 3;
+const FAST_STEP_SIZE = 40;
+let step_size = DEFAULT_STEP_SIZE;
+// let total_num_orders = 0;
 
 // for playing status
 const NOT_STARTED = 0;
@@ -172,12 +175,15 @@ controls.deactivate();
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20 && playing == PLAYING) {
-        if (scene.update(timeStamp, step_size, WIDTH, HEIGHT) == 0) {
-            // console.log('resetting step size');
-            // step_size = 2;
-            if (!scene.state.submitted) {
-                submitOrder(2);
-            }
+        scene.update(timeStamp, step_size, WIDTH, HEIGHT);
+        if (scene.state.atEnd && !scene.state.submitted) {
+            // console.log("AT END AND NOT SUBMITTED");
+            submitOrder(DEFAULT_STEP_SIZE);
+        }
+        else if (scene.state.atEnd && scene.state.submitted) {
+            // console.log("AT END AND SUBMITTED");
+            scene.state.submitted = false;
+            step_size = DEFAULT_STEP_SIZE;
         }
     }
     renderer.render(scene, camera);
@@ -242,7 +248,7 @@ window.addEventListener('keydown', function (event) {
 
     // clear
     if (event.key == 'c') {
-        if (playing == PLAYING) {
+        if (playing == PLAYING && !scene.state.submitted) {
             scene.clearOrder(WIDTH, HEIGHT);
         }
     }
@@ -294,7 +300,7 @@ function setSceneOpacity(value) {
 }
 
 // generate a new random order
-function randOrder(level) {
+function randOrder() {
     const BASES = ['yellow_cake', 'chocolate_cake'];
     const FROSTINGS = ['chocolate_frosting', 'matcha_frosting', 'strawberry_frosting'];
     const TOPPINGS = ['strawberry', 'candles', 'sprinkles'];
@@ -308,13 +314,29 @@ function randOrder(level) {
     }
     curr_order = order;
     console.log("CURR ORDER: " + order);
-    scene.state.submitted = false;
+
+    let file_path = 'src/assets/ingredients/cake_combos/p_'; 
+    for (let i = 0; i < order.length; i++) {
+        file_path += FILE_MAP[order[i]]; 
+        if (i != order.length -1) {
+            file_path += "_"; 
+        }
+    }
+    file_path += ".png"; 
+    // console.log(file_path)
+
+    const map = new THREE.TextureLoader().load(file_path);
+    let material = new THREE.SpriteMaterial({ map: map });
+    scene.state.menu[0].material = material;
+    scene.state.menu[0].material.needsUpdate = true;
+
 }
 
 // check if order is correct and update score/lives
 function submitOrder(newStepSize) {
     scene.addIngredientLayer();
     scene.state.submitted = true;
+    // total_num_orders += 1;
     const attempted_order = [...scene.state.order];
     attempted_order.splice(0, 1);
     const len = curr_order.length;
@@ -322,6 +344,7 @@ function submitOrder(newStepSize) {
         // console.log(curr_order[i]);
         // console.log(attempted_order[i]);
         if (curr_order[i] != attempted_order[i]) {
+            // INSERT CODE TO MAKE ORDER BOARD A RED X
             lives -= 1;
             wrong.play();
             randOrder();
@@ -330,6 +353,7 @@ function submitOrder(newStepSize) {
             return;
         }
     }
+    // INSERT CODE TO MAKE ORDER BOARD A GREEN CHECKMARK
     score += level * 100;
     correct.play();
     step_size = newStepSize;

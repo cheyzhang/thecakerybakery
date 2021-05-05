@@ -18,7 +18,9 @@ class KitchenScene extends Scene {
             updateList: [],
             draggable: [],
             order: [],
-            submitted: false
+            atEnd: false,
+            submitted: false, // 0 = not submitted, 1 = submitted but moving along still, 2
+            menu: []
         };
 
         // Set background to a nice color
@@ -63,20 +65,17 @@ class KitchenScene extends Scene {
     }
 
     update(timeStamp, stepSize, WIDTH, HEIGHT) {
-        // Call update for each object in the updateList
-        // console.log(this.state.updateList[0].children.x);
         if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
             this.clearOrder(WIDTH, HEIGHT);
-            this.state.submitted = true;
+            this.state.atEnd = true;
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
-            this.state.submitted = false;
-            // reset plate speed
-            return 0;
         }
-        for (const obj of this.state.updateList) {
-            obj.update(timeStamp, stepSize, WIDTH);
+        else {
+            this.state.atEnd = false;
+            for (const obj of this.state.updateList) {
+                obj.update(timeStamp, stepSize, WIDTH);
+            }
         }
-        return 1;
     }
 
     addIngredients(width, height) {
@@ -153,6 +152,7 @@ class KitchenScene extends Scene {
         sprite.position.y = 70;
         sprite.position.z = -1;
         this.add(sprite);
+        this.state.menu.push(sprite);
     }
 
     toggleOverlay(width, height, value) {
