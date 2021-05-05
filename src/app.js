@@ -200,6 +200,7 @@ const onAnimationFrameHandler = (timeStamp) => {
             }
             else {
                 submitOrder(DEFAULT_STEP_SIZE);
+                scene.state.submitted = false;
             }
             randOrder();
         }
@@ -458,11 +459,11 @@ function submitOrder(newStepSize) {
             level_up.play();
         }
         else {
-            DEFAULT_STEP_SIZE += 1;
+            DEFAULT_STEP_SIZE += 0.8;
         }
     }
     else if (level == 3) {
-        DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 1;
+        DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 0.8;
         console.log(DEFAULT_STEP_SIZE);
     }
     // add level 4 for multiple toppings?
