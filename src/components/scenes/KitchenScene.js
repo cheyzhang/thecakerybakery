@@ -36,14 +36,6 @@ class KitchenScene extends Scene {
         this.add(sprite);
 
         this.toggleOverlay(width, height, START);
-        // map = new THREE.TextureLoader().load( 'src/assets/start.png' );
-        // map.minfilter = THREE.LinearMipMapLinearFilter
-        // material = new THREE.SpriteMaterial( { map: map } );
-        // sprite = new THREE.Sprite( material );
-        // sprite.scale.set( width* 0.2, height* 0.24, 1 );
-        // sprite.position.z = -1;
-        // sprite.type = "start";
-        // this.add(sprite);
 
         // const planeGeometry = new THREE.PlaneBufferGeometry(width * 0.58, height * 0.7);
         // var texture = new THREE.TextureLoader().load('https://i.imgur.com/szuOOo2.png');
@@ -74,6 +66,7 @@ class KitchenScene extends Scene {
                     this.remove(obj);
                 }                
             }
+            this.state.updateList = this.state.updateList.splice(0, 1);
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
             // reset plate speed
             return 0;
