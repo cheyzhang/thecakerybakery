@@ -97,15 +97,20 @@ controls.addEventListener('dragend', function (event) {
     if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
         if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
             scene.state.updateList.push(event.object.parent);
-            // scene.remove(event.object.parent); 
-            // let map = new THREE.TextureLoader().load( 'src/assets/ingredients/cake_and_plate/chocolate_cake_plate.png' ); 
-            // let material = new THREE.SpriteMaterial( { map: map } ); 
-            // scene.state.updateList[0].children[0].material = material; 
-            // scene.state.updateList[0].children[0].material.needsUpdate = true; 
-            // scene.state.updateList[0].children[0].scale.set( WIDTH * 0.1, HEIGHT * 0.1, 1 ); 
-            // scene.state.updateList[0].children[0].scale.needsUpdate = true; 
-            // scene.state.updateList[0].children[0].position.y += 10;
-            // console.log(event.object.parent);
+            scene.remove(event.object.parent);
+            let map;  
+            if (event.object.parent.name == "chocolate_cake") {
+                map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_cc.png' ); 
+            }
+            else if (event.object.parent.name == "vanilla_cake") {
+                map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_yc.png' );  
+            }
+            let material = new THREE.SpriteMaterial( { map: map } ); 
+            scene.state.updateList[0].children[0].material = material; 
+            scene.state.updateList[0].children[0].material.needsUpdate = true; 
+            scene.state.updateList[0].children[0].scale.set( WIDTH * 0.1, HEIGHT * 0.1, 1 ); 
+            scene.state.updateList[0].children[0].scale.needsUpdate = true; 
+            scene.state.updateList[0].children[0].position.y += 10;
             for (let i = 0; i < scene.state.draggable.length; i++) {
                 const obj = scene.state.draggable[i];
                 if (obj.uuid == event.object.parent.uuid) {
