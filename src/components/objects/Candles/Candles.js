@@ -1,19 +1,19 @@
 import * as THREE from 'three';
-import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial } from 'three';
+import { Group} from 'three';
 
-class VanillaCake extends Group {
+class Candles extends Group {
     constructor(x, y, width, height) {
         // Call parent Group() constructor
         super();
 
-        this.name = 'vanilla_cake';
-        this.type = 'base';
+        this.name = 'candles';
+        this.type = 'topping';
 
-        const map = new THREE.TextureLoader().load( 'src/assets/ingredients/cake/yellow_cake.png' );
+        const map = new THREE.TextureLoader().load( 'src/assets/ingredients/toppings/candles.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
-        sprite.scale.set( width * 0.06, height * 0.06, 1 );
+        sprite.scale.set( width * 0.04, height * 0.065, 1 );
         sprite.position.z = 0; 
         sprite.position.x = x; 
         sprite.position.y = y;
@@ -30,4 +30,4 @@ class VanillaCake extends Group {
     }
 }
 
-export default VanillaCake;
+export default Candles;

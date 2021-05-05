@@ -1,19 +1,19 @@
 import * as THREE from 'three';
-import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial } from 'three';
+import { Group } from 'three';
 
-class VanillaCake extends Group {
+class ChocolateFrosting extends Group {
     constructor(x, y, width, height) {
         // Call parent Group() constructor
         super();
 
-        this.name = 'vanilla_cake';
-        this.type = 'base';
+        this.name = 'chocolate_frosting';
+        this.type = 'frosting';
 
-        const map = new THREE.TextureLoader().load( 'src/assets/ingredients/cake/yellow_cake.png' );
+        const map = new THREE.TextureLoader().load( 'src/assets/ingredients/frosting/chocolate_frosting.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
-        sprite.scale.set( width * 0.06, height * 0.06, 1 );
+        sprite.scale.set( width * 0.068, height * 0.035, 1 );
         sprite.position.z = 0; 
         sprite.position.x = x; 
         sprite.position.y = y;
@@ -30,4 +30,4 @@ class VanillaCake extends Group {
     }
 }
 
-export default VanillaCake;
+export default ChocolateFrosting;

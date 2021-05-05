@@ -9,11 +9,11 @@ class Strawberry extends Group {
         this.name = 'strawberry';
         this.type = 'topping';
 
-        const map = new THREE.TextureLoader().load( 'src/assets/strawberry.png' );
+        const map = new THREE.TextureLoader().load( 'src/assets/ingredients/toppings/strawberry.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
-        sprite.scale.set( width * 0.06, height * 0.11, 1 );
+        sprite.scale.set( width * 0.025, height * 0.055, 1 );
         sprite.position.z = 0; 
         sprite.position.x = x; 
         sprite.position.y = y;
