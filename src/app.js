@@ -129,7 +129,17 @@ controls.addEventListener('dragend', function (event) {
     let plate_pos = scene.state.updateList[scene.state.updateList.length - 1].children[0].position;
     let obj_pos = event.object.position;
     // console.log(event.object.parent.type);
-    if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
+    let y_thresh = 60; 
+    if (scene.state.updateList[0].type != 'plate') {
+        y_thresh += 20; 
+    }
+    if (scene.state.updateList[0].type != 'base') {
+        y_thresh += 20; 
+    }
+    if (scene.state.updateList[0].type != 'frosting') {
+        y_thresh += 20; 
+    }
+    if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + y_thresh && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
         // console.log(scene.state.updateList[0]);
         // if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
         // uncomment below line for topping on toppings
