@@ -107,7 +107,6 @@ link.setAttribute('type', 'text/css');
 link.setAttribute('href', 'https://fonts.googleapis.com/css2?family=VT323&display=swap');
 document.head.appendChild(link);
 
-
 // Set up controls
 const controls = new DragControls(scene.state.draggable, camera, renderer.domElement);
 
@@ -163,7 +162,10 @@ controls.addEventListener('dragend', function (event) {
             scene.state.updateList[0].children[0].material.needsUpdate = true;
             scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
             scene.state.updateList[0].children[0].scale.needsUpdate = true;
-            scene.state.updateList[0].children[0].position.y += 10;
+            if (scene.state.updateList[0].type == "plate") {
+                scene.state.updateList[0].children[0].position.y += 10;
+            }
+            
             // update the type
             scene.state.updateList[0].type = new_type;
 
@@ -328,7 +330,7 @@ function startGame() {
     live_text.style.position = 'absolute';
     live_text.style.width = 100;
     live_text.style.height = 100;
-    live_text.innerHTML = "Lives left: " + lives;
+    live_text.innerHTML = "Lives: " + lives;
     live_text.style.top = 130 + 'px';
     live_text.style.left = 1300 + 'px';
     live_text.style.fontFamily = 'VT323';
@@ -440,26 +442,18 @@ function submitOrder(newStepSize) {
     scene.replenishIngredients(WIDTH, HEIGHT, attempted_order);
     const len = curr_order.length;
     for (let i = 0; i < len; i++) {
-        // console.log(curr_order[i]);
-        // console.log(attempted_order[i]);
+        console.log(curr_order[i]);
+        console.log(attempted_order[i])
         if (curr_order[i] != attempted_order[i]) {
-            // INCORRECT ORDER
-            lives -= 1;
-            wrong.play();
-            const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
-            let material = new THREE.SpriteMaterial({ map: map });
-            scene.state.menu[0].material = material;
-            scene.state.menu[0].material.needsUpdate = true;
-            scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
-            scene.state.menu[0].scale.needsUpdate = true;
-            step_size = newStepSize;
-            if (lives == 0) {
-                endGame();
-            }
+            incorrectOrder(newStepSize);
             return;
         }
     }
     // CORRECT ORDER
+    correctOrder(newStepSize);
+}
+
+function correctOrder(newStepSize) {
     score += 100;
     if (level == 1 && score >= 400) {
         level = 2;
@@ -468,7 +462,7 @@ function submitOrder(newStepSize) {
     else if (level == 2) {
         if (score >= 1000) {
             level = 3;
-            DEFAULT_STEP_SIZE = 7;
+            DEFAULT_STEP_SIZE = 5.5;
             level_up.play();
         }
         else {
@@ -492,5 +486,22 @@ function submitOrder(newStepSize) {
 
     document.getElementById('level_text').innerHTML = 'Level: ' + level;
     document.getElementById('score_text').innerHTML = 'Score: ' + score;
-    document.getElementById('live_text').innerHTML = 'Lives left: ' + lives;
+
+}
+
+function incorrectOrder(newStepSize) {
+    // INCORRECT ORDER
+    lives -= 1;
+    document.getElementById('live_text').innerHTML = 'Lives: ' + lives;
+    wrong.play();
+    const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
+    let material = new THREE.SpriteMaterial({ map: map });
+    scene.state.menu[0].material = material;
+    scene.state.menu[0].material.needsUpdate = true;
+    scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
+    scene.state.menu[0].scale.needsUpdate = true;
+    step_size = newStepSize;
+    if (lives == 0) {
+        endGame();
+    }
 }
