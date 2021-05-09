@@ -20,6 +20,7 @@
     "prebuild": "rimraf ./build && mkdirp ./build",
     "build": "npm run prebuild && webpack --mode production --progress --output-public-path \"\"",
     "format": "prettier --write '*.js' 'src/**/*.js'",
+    "predeploy": "npm run build",
     "deploy": "npm run prebuild && webpack --mode production --progress && gh-pages -d build"
   },
   "dependencies": {
