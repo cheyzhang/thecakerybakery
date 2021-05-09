@@ -59,7 +59,7 @@ class KitchenScene extends Scene {
 
     update(timeStamp, stepSize, WIDTH, HEIGHT) {
         if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
-            this.clearOrder(WIDTH, HEIGHT);
+            // this.clearOrder(WIDTH, HEIGHT);
             this.state.atEnd = true;
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
         }

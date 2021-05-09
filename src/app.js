@@ -160,6 +160,19 @@ controls.addEventListener('dragend', function (event) {
             let material = new THREE.SpriteMaterial({ map: map });
             scene.state.updateList[0].children[0].material = material;
             scene.state.updateList[0].children[0].material.needsUpdate = true;
+            switch (scene.state.updateList[0].type) {
+                case "base":
+                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+                    break;
+                case "frosting":
+                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.12, HEIGHT * 0.12, 1);
+                    break;
+                case "topping":
+                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.15, HEIGHT * 0.15, 1);
+                    break;
+                default:
+                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            }
             scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
             scene.state.updateList[0].children[0].scale.needsUpdate = true;
             if (scene.state.updateList[0].type == "plate") {
@@ -442,15 +455,17 @@ function submitOrder(newStepSize) {
     scene.replenishIngredients(WIDTH, HEIGHT, attempted_order);
     const len = curr_order.length;
     for (let i = 0; i < len; i++) {
-        console.log(curr_order[i]);
-        console.log(attempted_order[i])
+        // console.log(curr_order[i]);
+        // console.log(attempted_order[i])
         if (curr_order[i] != attempted_order[i]) {
             incorrectOrder(newStepSize);
+            scene.clearOrder(WIDTH, HEIGHT);
             return;
         }
     }
     // CORRECT ORDER
     correctOrder(newStepSize);
+    scene.clearOrder(WIDTH, HEIGHT);
 }
 
 function correctOrder(newStepSize) {
