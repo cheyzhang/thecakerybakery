@@ -1,7 +1,6 @@
 {
   "name": "the-cakery-bakery",
-  "homepage": "https://cz10.github.io/thecakerybakery/",
-  "repository": "https://github.com/cz10/thecakerybakery",
+  "repository": "thecakerybakery",
   "version": "0.1.0",
   "title": "The Cakery Bakery",
   "description": "The Cakery Bakery is a fast-paced game where the user fulfills customer's cake orders.",
@@ -35,6 +34,7 @@
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "babel-loader": "^8.1.0",
+    "copy-webpack-plugin": "^5.1.1",
     "file-loader": "^6.0.0",
     "gh-pages": "^2.2.0",
     "html-webpack-plugin": "^4.3.0",

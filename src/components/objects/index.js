@@ -10,3 +10,5 @@ export * from './StrawberryFrosting';
 export * from './Strawberry';
 export * from './Candles';
 export * from './Sprinkles';
+
+export * from './Notification';

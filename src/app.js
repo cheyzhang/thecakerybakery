@@ -22,13 +22,18 @@ import LevelUpFile from './assets/sfx/level_up.wav';
 // Variables
 let WIDTH = window.innerWidth;
 let HEIGHT = window.innerHeight;
+console.log(WIDTH);
+console.log(HEIGHT);
 let score = 0;
 let lives = 3;
 let level = 1;
 let curr_order;
-let DEFAULT_STEP_SIZE = 4;
-const SUBMITTED_STEP_SIZE = 50;
+let DEFAULT_STEP_SIZE = 0.002 * WIDTH;
+let SUBMITTED_STEP_SIZE = 0.03 * WIDTH;
 let step_size = DEFAULT_STEP_SIZE;
+let muted = false;
+const MUTED_NOTIF_FILE = 'src/assets/notifications/muted.png';
+const UNMUTED_NOTIF_FILE = 'src/assets/notifications/unmuted.png';
 // let total_num_orders = 0;
 
 // for playing status
@@ -116,7 +121,7 @@ controls.addEventListener('dragstart', function (event) {
     orig_pos = event.object.position.clone();
     // console.log(orig_pos);
     event.object.material.opacity = 0.6;
-    blip.play();
+    playAudio(blip);
 });
 
 // on drag end
@@ -128,17 +133,14 @@ controls.addEventListener('dragend', function (event) {
     let plate_pos = scene.state.updateList[scene.state.updateList.length - 1].children[0].position;
     let obj_pos = event.object.position;
     // console.log(event.object.parent.type);
-    let y_thresh = 60; 
-    if (scene.state.updateList[0].type != 'plate') {
-        y_thresh += 20; 
+    let y_thresh = 0; 
+    if (scene.state.updateList[0].type == 'base') {
+        y_thresh = 10; 
     }
-    if (scene.state.updateList[0].type != 'base') {
-        y_thresh += 20; 
+    else if (scene.state.updateList[0].type == 'frosting') {
+        y_thresh = 30; 
     }
-    if (scene.state.updateList[0].type != 'frosting') {
-        y_thresh += 20; 
-    }
-    if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + y_thresh && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 30) {
+    if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 40 + y_thresh) {
         // console.log(scene.state.updateList[0]);
         // if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
         // uncomment below line for topping on toppings
@@ -170,23 +172,48 @@ controls.addEventListener('dragend', function (event) {
             let material = new THREE.SpriteMaterial({ map: map });
             scene.state.updateList[0].children[0].material = material;
             scene.state.updateList[0].children[0].material.needsUpdate = true;
-            switch (scene.state.updateList[0].type) {
-                case "base":
-                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
-                    break;
-                case "frosting":
-                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.12, HEIGHT * 0.12, 1);
-                    break;
-                case "topping":
-                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.15, HEIGHT * 0.15, 1);
-                    break;
-                default:
-                    scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
-            }
+            console.log(scene.state.updateList[0].type);
+            console.log(event.object.parent.name);
+            // scale the images properly
+            // switch (scene.state.updateList[0].type) {
+            //     case "plate":
+            //         scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            //         console.log("new: base");
+            //         break;
+            //     case "base":
+            //         scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            //         console.log("new: frosting");
+            //         break;
+            //     case "frosting":
+            //         switch (event.object.parent.name) {
+            //             case "candles":
+            //                 console.log(scene.state.updateList[0].children[0]);
+            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.2, HEIGHT * 0.8, 1);
+            //                 scene.state.updateList[0].children[0].scale.needsUpdate = true;
+            //                 console.log("new: candles");
+            //                 console.log(scene.state.updateList[0].children[0].scale);
+            //                 break;
+            //             case "sprinkles":
+            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            //                 console.log("new: sprinkles");
+            //                 break;
+            //             case "strawberry":
+            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.12, HEIGHT * 0.12, 1);
+            //                 console.log("new: strawberry");
+            //                 break;
+            //             default:
+            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            //                 break;
+            //         }
+            //     default:
+            //         scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            //         break;
+            // }
+            // console.log(scene.state.updateList[0].children[0].scale);
             scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
             scene.state.updateList[0].children[0].scale.needsUpdate = true;
             if (scene.state.updateList[0].type == "plate") {
-                scene.state.updateList[0].children[0].position.y += 10;
+                scene.state.updateList[0].children[0].position.y += 17;
             }
             
             // update the type
@@ -201,13 +228,13 @@ controls.addEventListener('dragend', function (event) {
             }
         }
         else {
-            error.play();
+            playAudio(error);
             event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
         }
     }
 
     else {
-        error.play();
+        playAudio(error);
         event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
     }
 });
@@ -216,8 +243,8 @@ controls.deactivate();
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    if (timeStamp % 50 < 20 && playing == PLAYING) {
-        scene.update(timeStamp, step_size, WIDTH, HEIGHT);
+    if (timeStamp % 50 < 20) {
+        scene.update(timeStamp, step_size, WIDTH, HEIGHT, playing);
         if (scene.state.atEnd) {
             if (scene.state.submitted) {
                 scene.state.submitted = false;
@@ -242,6 +269,8 @@ const windowResizeHandler = () => {
     camera.aspect = innerWidth / innerHeight;
     WIDTH = window.innerWidth;
     HEIGHT = window.innerHeight;
+    DEFAULT_STEP_SIZE = 0.002 * WIDTH;
+    SUBMITTED_STEP_SIZE = 0.03 * WIDTH;
     camera.updateProjectionMatrix();
 };
 windowResizeHandler();
@@ -264,6 +293,19 @@ window.addEventListener('keydown', function (event) {
         }
     }
 
+    // mute
+    if (event.key == 'm') {
+        if (muted) {
+            console.log('unmuting');
+            scene.showNotification(UNMUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
+        }
+        else {
+            console.log('muting');
+            scene.showNotification(MUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
+        }
+        muted = !muted;
+    }
+
     // bringing up instructions
     if (event.key == 'i') {
         if (playing == NOT_STARTED) {
@@ -284,13 +326,16 @@ window.addEventListener('keydown', function (event) {
         }
     }
 
-    // bring up controls
+    // bring up controls and clear
     if (event.key == 'c') {
-        if (playing == NOT_STARTED) {
+        if (playing == NOT_STARTED || playing == PAUSED) {
             scene.toggleOverlay(WIDTH, HEIGHT, CONTROLS);
         }
-        else {
-            // do nothing if already in play or paused? 
+        else if (playing == PLAYING && !scene.state.submitted) {
+            const attempted_order = [...scene.state.order];
+            attempted_order.splice(0, 1);
+            scene.replenishIngredients(WIDTH, HEIGHT, attempted_order);
+            scene.clearOrder(WIDTH, HEIGHT);
         }
     }
 
@@ -302,19 +347,21 @@ window.addEventListener('keydown', function (event) {
             }
         }
     }
-
-    // clear
-    if (event.key == 'c') {
-        if (playing == PLAYING && !scene.state.submitted) {
-            scene.clearOrder(WIDTH, HEIGHT);
-        }
-    }
 });
+
+// **** HELPER FUNCTIONS BELOW ****
+
+// play audio
+function playAudio(to_play) {
+    if (!muted) {
+        to_play.play();
+    }
+}
 
 // start the game
 function startGame() {
     playing = PLAYING;
-    start.play();
+    playAudio(start);
     controls.activate();
 
     scene.addIngredients(WIDTH, HEIGHT);
@@ -328,8 +375,8 @@ function startGame() {
     score_text.style.width = 100;
     score_text.style.height = 100;
     score_text.innerHTML = "Score: " + score;
-    score_text.style.top = 80 + 'px';
-    score_text.style.left = 1300 + 'px';
+    score_text.style.top = 0.09 * HEIGHT + 'px';
+    score_text.style.left = 0.83 * WIDTH + 'px';
     score_text.style.fontFamily = 'VT323';
     score_text.style.fontSize = 30 + 'px';
     score_text.style.color = "#E9967A";
@@ -341,8 +388,8 @@ function startGame() {
     level_text.style.width = 100;
     level_text.style.height = 100;
     level_text.innerHTML = "Level: " + level;
-    level_text.style.top = 105 + 'px';
-    level_text.style.left = 1300 + 'px';
+    level_text.style.top = 0.12 * HEIGHT + 'px';
+    level_text.style.left = 0.83 * WIDTH + 'px';
     level_text.style.fontFamily = 'VT323';
     level_text.style.fontSize = 30 + 'px';
     level_text.style.color = "#E9967A";
@@ -354,8 +401,8 @@ function startGame() {
     live_text.style.width = 100;
     live_text.style.height = 100;
     live_text.innerHTML = "Lives: " + lives;
-    live_text.style.top = 130 + 'px';
-    live_text.style.left = 1300 + 'px';
+    live_text.style.top = 0.15 * HEIGHT + 'px';
+    live_text.style.left = 0.83 * WIDTH + 'px';
     live_text.style.fontFamily = 'VT323';
     live_text.style.fontSize = 30 + 'px';
     live_text.style.color = "#E9967A";
@@ -366,7 +413,7 @@ function startGame() {
 // pause the game
 function pauseGame() {
     playing = PAUSED;
-    pause.play();
+    playAudio(pause);
     setSceneOpacity(0.5);
     scene.toggleOverlay(WIDTH, HEIGHT, PAUSED_TITLE);
     controls.deactivate();
@@ -375,7 +422,7 @@ function pauseGame() {
 // restart the game (after a pause)
 function restartGame() {
     playing = PLAYING;
-    start.play();
+    playAudio(start);
     setSceneOpacity(1);
     scene.toggleOverlay(WIDTH, HEIGHT, NONE);
     controls.activate();
@@ -392,7 +439,7 @@ function endGame() {
     setSceneOpacity(0.5);
     scene.toggleOverlay(WIDTH, HEIGHT, GAME_OVER_TITLE);
     controls.deactivate();
-    game_over_audio.play();
+    playAudio(game_over_audio);
 }
 
 // set the opacity of all objects in scene
@@ -482,13 +529,13 @@ function correctOrder(newStepSize) {
     score += 100;
     if (level == 1 && score >= 400) {
         level = 2;
-        level_up.play();
+        playAudio(level_up);
     }
     else if (level == 2) {
         if (score >= 1000) {
             level = 3;
             DEFAULT_STEP_SIZE = 5.5;
-            level_up.play();
+            playAudio(level_up);
         }
         else {
             DEFAULT_STEP_SIZE += 0.8;
@@ -499,7 +546,7 @@ function correctOrder(newStepSize) {
         console.log(DEFAULT_STEP_SIZE);
     }
     // add level 4 for multiple toppings?
-    correct.play();
+    playAudio(correct);
     step_size = newStepSize;
 
     const map = new THREE.TextureLoader().load('src/assets/results/correct.png');
@@ -511,14 +558,13 @@ function correctOrder(newStepSize) {
 
     document.getElementById('level_text').innerHTML = 'Level: ' + level;
     document.getElementById('score_text').innerHTML = 'Score: ' + score;
-
 }
 
 function incorrectOrder(newStepSize) {
     // INCORRECT ORDER
     lives -= 1;
     document.getElementById('live_text').innerHTML = 'Lives: ' + lives;
-    wrong.play();
+    playAudio(wrong);
     const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
     let material = new THREE.SpriteMaterial({ map: map });
     scene.state.menu[0].material = material;
