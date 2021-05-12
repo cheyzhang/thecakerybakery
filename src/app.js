@@ -616,7 +616,9 @@ function correctOrder(newStepSize) {
     if (level == 1 && score >= 400) {
         level = 2;
         playAudio(level_up);
-        scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH, HEIGHT*2);
+        console.log(scene.state.updateList);
+        scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH*2, HEIGHT);
+        console.log(scene.state.updateList);
     }
     else if (level == 2) {
         if (score >= 1000) {
