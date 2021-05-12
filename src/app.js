@@ -50,6 +50,33 @@ const CONTROLS = 2;
 const PAUSED_TITLE = 3;
 const GAME_OVER_TITLE = 4;
 const NONE = 5;
+const START_BLINK = 6;
+const INSTR_BLINK = 7;
+const CONTROLS_BLINK = 8;
+const PAUSED_BLINK = 9;
+const GAME_OVER_BLINK = 10;
+let overlay = START;
+const BLINK_MAP = new Map();
+BLINK_MAP.set(START, START_BLINK);
+BLINK_MAP.set(INSTR, INSTR_BLINK);
+BLINK_MAP.set(CONTROLS, CONTROLS_BLINK);
+BLINK_MAP.set(PAUSED_TITLE, PAUSED_BLINK);
+BLINK_MAP.set(GAME_OVER_TITLE, GAME_OVER_BLINK);
+BLINK_MAP.set(START_BLINK, START);
+BLINK_MAP.set(INSTR_BLINK, INSTR);
+BLINK_MAP.set(CONTROLS_BLINK, CONTROLS);
+BLINK_MAP.set(PAUSED_BLINK, PAUSED_TITLE);
+BLINK_MAP.set(GAME_OVER_BLINK, GAME_OVER_TITLE);
+// INSTR: INSTR_BLINK,
+// CONTROLS: CONTROLS_BLINK,
+// PAUSED_TITLE: PAUSED_BLINK,
+// GAME_OVER_TITLE: GAME_OVER_BLINK,
+// START_BLINK: START,
+// INSTR_BLINK: INSTR,
+// CONTROLS_BLINK: CONTROLS,
+// PAUSED_BLINK: PAUSED_TITLE,
+// GAME_OVER_BLINK: GAME_OVER_TITLE
+
 
 // mapping to cake combo files
 const FILE_MAP = {
@@ -241,6 +268,14 @@ controls.addEventListener('dragend', function (event) {
 
 controls.deactivate();
 
+// make titles blink
+let blinking = setInterval(function () {
+    if (overlay != NONE) {
+        scene.toggleOverlay(WIDTH, HEIGHT, BLINK_MAP.get(overlay));
+        overlay = BLINK_MAP.get(overlay);
+    }
+}, 1000);
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20) {
@@ -257,6 +292,7 @@ const onAnimationFrameHandler = (timeStamp) => {
             randOrder();
         }
     }
+    
     renderer.render(scene, camera);
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
@@ -309,7 +345,8 @@ window.addEventListener('keydown', function (event) {
     // bringing up instructions
     if (event.key == 'i') {
         if (playing == NOT_STARTED) {
-            scene.toggleOverlay(WIDTH, HEIGHT, INSTR);
+            overlay = INSTR;
+            // scene.toggleOverlay(WIDTH, HEIGHT, INSTR);
         }
         else {
             // do nothing if already in play or paused? 
@@ -319,7 +356,8 @@ window.addEventListener('keydown', function (event) {
     // bring up home screen (welcome page)
     if (event.key == 'h') {
         if (playing == NOT_STARTED) {
-            scene.toggleOverlay(WIDTH, HEIGHT, START);
+            overlay = START;
+            // scene.toggleOverlay(WIDTH, HEIGHT, START);
         }
         else {
             // do nothing if already in play or paused? 
@@ -329,7 +367,8 @@ window.addEventListener('keydown', function (event) {
     // bring up controls and clear
     if (event.key == 'c') {
         if (playing == NOT_STARTED || playing == PAUSED) {
-            scene.toggleOverlay(WIDTH, HEIGHT, CONTROLS);
+            overlay = CONTROLS;
+            // scene.toggleOverlay(WIDTH, HEIGHT, CONTROLS);
         }
         else if (playing == PLAYING && !scene.state.submitted) {
             const attempted_order = [...scene.state.order];
@@ -367,7 +406,8 @@ function startGame() {
     scene.addIngredients(WIDTH, HEIGHT);
     scene.addOrder(WIDTH, HEIGHT);
     setSceneOpacity(1);
-    scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    overlay = NONE;
+    // scene.toggleOverlay(WIDTH, HEIGHT, NONE);
     randOrder();
 
     var score_text = document.createElement('div');
@@ -415,7 +455,8 @@ function pauseGame() {
     playing = PAUSED;
     playAudio(pause);
     setSceneOpacity(0.5);
-    scene.toggleOverlay(WIDTH, HEIGHT, PAUSED_TITLE);
+    overlay = PAUSED_TITLE;
+    // scene.toggleOverlay(WIDTH, HEIGHT, PAUSED_TITLE);
     controls.deactivate();
 }
 
@@ -424,7 +465,8 @@ function restartGame() {
     playing = PLAYING;
     playAudio(start);
     setSceneOpacity(1);
-    scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    overlay = NONE;
+    // scene.toggleOverlay(WIDTH, HEIGHT, NONE);
     controls.activate();
 }
 
@@ -437,7 +479,8 @@ function endGame() {
     scene.state.menu[0].scale.set(WIDTH * 0.12, WIDTH * 0.12, 1);
     scene.state.menu[0].scale.needsUpdate = true;
     setSceneOpacity(0.5);
-    scene.toggleOverlay(WIDTH, HEIGHT, GAME_OVER_TITLE);
+    overlay = GAME_OVER_TITLE;
+    // scene.toggleOverlay(WIDTH, HEIGHT, GAME_OVER_TITLE);
     controls.deactivate();
     playAudio(game_over_audio);
 }
