@@ -16,11 +16,6 @@ const CONTROLS = 2;
 const PAUSED_TITLE = 3;
 const GAME_OVER_TITLE = 4;
 const NONE = 5;
-const START_BLINK = 6;
-const INSTR_BLINK = 7;
-const CONTROLS_BLINK = 8;
-const PAUSED_BLINK = 9;
-const GAME_OVER_BLINK = 10;
 
 const ALL_INGREDIENTS = [
     'chocolate_cake',
@@ -182,46 +177,46 @@ class KitchenScene extends Scene {
 
     // toggle the title screens
     toggleOverlay(width, height, value) {
-        for (const obj of this.children) {
-            if (obj.type == "overlay") {
-                this.remove(obj);
-                break;
-            }
-        }
         // console.log(this.children);
         let file;
         switch (value) {
             case START:
-                file = 'src/assets/overlays/welcome_page.png';
-                break;
-            case START_BLINK:
+            //     file = 'src/assets/overlays/welcome_page.png';
+            //     break;
+            // case START_BLINK:
                 file = 'src/assets/overlays/welcome_page_blink.png';
                 break;
             case INSTR:
-                file = 'src/assets/overlays/instructions.png';
-                break;
-            case INSTR_BLINK:
+            //     file = 'src/assets/overlays/instructions.png';
+            //     break;
+            // case INSTR_BLINK:
                 file = 'src/assets/overlays/instructions_blink.png';
                 break;
             case CONTROLS:
-                file = 'src/assets/overlays/controls.png';
-                break;
-            case CONTROLS_BLINK:
+            //     file = 'src/assets/overlays/controls.png';
+            //     break;
+            // case CONTROLS_BLINK:
                 file = 'src/assets/overlays/controls_blink.png';
                 break;
             case PAUSED_TITLE:
-                file = 'src/assets/overlays/paused.png';
-                break;
-            case PAUSED_BLINK:
+            //     file = 'src/assets/overlays/paused.png';
+            //     break;
+            // case PAUSED_BLINK:
                 file = 'src/assets/overlays/paused_blink.png';
                 break;
             case GAME_OVER_TITLE:
-                file = 'src/assets/overlays/game_over.png';
-                break;
-            case GAME_OVER_BLINK:
+            //     file = 'src/assets/overlays/game_over.png';
+            //     break;
+            // case GAME_OVER_BLINK:
                 file = 'src/assets/overlays/game_over_blink.png';
                 break;
             case NONE:
+                for (const obj of this.children) {
+                    if (obj.type == "overlay") {
+                        this.remove(obj);
+                        break;
+                    }
+                }
                 return;
             default:
                 return;
@@ -230,8 +225,18 @@ class KitchenScene extends Scene {
         const map = new THREE.TextureLoader().load(file);
         map.minfilter = THREE.LinearMipMapLinearFilter
         const material = new THREE.SpriteMaterial({ map: map });
+        for (const obj of this.children) {
+            // if there's already an overlay, just replace its material
+            if (obj.type == "overlay") {
+                obj.material = material;
+                obj.material.needsUpdate = true;
+                return;
+            }
+        }
+        // else make a completely new sprite
         const sprite = new THREE.Sprite(material);
-        console.log(sprite);
+        // console.log(sprite);
+        console.log("new sprite");
         // 336 x 207 = ratio of 0.62
         const new_width = Math.max(350, width * 0.2);
         sprite.scale.set(new_width, 0.62 * new_width, 1);

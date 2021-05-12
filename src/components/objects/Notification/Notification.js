@@ -23,6 +23,7 @@ class Notification extends Group {
         return this;
     }
     update(timeStamp, stepSize, width) {
+        console.log(timeStamp);
         if (this.children[0].material.opacity < 0.04) {
             return 1;
         }
