@@ -34,6 +34,7 @@ let step_size = DEFAULT_STEP_SIZE;
 let muted = false;
 const MUTED_NOTIF_FILE = 'src/assets/notifications/muted.png';
 const UNMUTED_NOTIF_FILE = 'src/assets/notifications/unmuted.png';
+const LEVEL_UP_FILE = 'src/assets/notifications/level_up2.png'; 
 // let total_num_orders = 0;
 
 // for playing status
@@ -573,12 +574,14 @@ function correctOrder(newStepSize) {
     if (level == 1 && score >= 400) {
         level = 2;
         playAudio(level_up);
+        scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH, HEIGHT*2);
     }
     else if (level == 2) {
         if (score >= 1000) {
             level = 3;
             DEFAULT_STEP_SIZE = 5.5;
             playAudio(level_up);
+            scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH*0.5, HEIGHT);
         }
         else {
             DEFAULT_STEP_SIZE += 0.8;
