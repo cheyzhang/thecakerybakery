@@ -50,33 +50,24 @@ const CONTROLS = 2;
 const PAUSED_TITLE = 3;
 const GAME_OVER_TITLE = 4;
 const NONE = 5;
-const START_BLINK = 6;
-const INSTR_BLINK = 7;
-const CONTROLS_BLINK = 8;
-const PAUSED_BLINK = 9;
-const GAME_OVER_BLINK = 10;
+// const START_BLINK = 6;
+// const INSTR_BLINK = 7;
+// const CONTROLS_BLINK = 8;
+// const PAUSED_BLINK = 9;
+// const GAME_OVER_BLINK = 10;
+// const NEW_NONE = 11;
 let overlay = START;
-const BLINK_MAP = new Map();
-BLINK_MAP.set(START, START_BLINK);
-BLINK_MAP.set(INSTR, INSTR_BLINK);
-BLINK_MAP.set(CONTROLS, CONTROLS_BLINK);
-BLINK_MAP.set(PAUSED_TITLE, PAUSED_BLINK);
-BLINK_MAP.set(GAME_OVER_TITLE, GAME_OVER_BLINK);
-BLINK_MAP.set(START_BLINK, START);
-BLINK_MAP.set(INSTR_BLINK, INSTR);
-BLINK_MAP.set(CONTROLS_BLINK, CONTROLS);
-BLINK_MAP.set(PAUSED_BLINK, PAUSED_TITLE);
-BLINK_MAP.set(GAME_OVER_BLINK, GAME_OVER_TITLE);
-// INSTR: INSTR_BLINK,
-// CONTROLS: CONTROLS_BLINK,
-// PAUSED_TITLE: PAUSED_BLINK,
-// GAME_OVER_TITLE: GAME_OVER_BLINK,
-// START_BLINK: START,
-// INSTR_BLINK: INSTR,
-// CONTROLS_BLINK: CONTROLS,
-// PAUSED_BLINK: PAUSED_TITLE,
-// GAME_OVER_BLINK: GAME_OVER_TITLE
-
+// const BLINK_MAP = new Map();
+// BLINK_MAP.set(START, START_BLINK);
+// BLINK_MAP.set(INSTR, INSTR_BLINK);
+// BLINK_MAP.set(CONTROLS, CONTROLS_BLINK);
+// BLINK_MAP.set(PAUSED_TITLE, PAUSED_BLINK);
+// BLINK_MAP.set(GAME_OVER_TITLE, GAME_OVER_BLINK);
+// BLINK_MAP.set(START_BLINK, START);
+// BLINK_MAP.set(INSTR_BLINK, INSTR);
+// BLINK_MAP.set(CONTROLS_BLINK, CONTROLS);
+// BLINK_MAP.set(PAUSED_BLINK, PAUSED_TITLE);
+// BLINK_MAP.set(GAME_OVER_BLINK, GAME_OVER_TITLE);
 
 // mapping to cake combo files
 const FILE_MAP = {
@@ -271,10 +262,39 @@ controls.deactivate();
 // make titles blink
 let blinking = setInterval(function () {
     if (overlay != NONE) {
-        scene.toggleOverlay(WIDTH, HEIGHT, BLINK_MAP.get(overlay));
-        overlay = BLINK_MAP.get(overlay);
+        if (control_text.style.display == 'none') {
+            control_text.style.display = 'flex';
+        }
+        else {
+            control_text.style.display = 'none';
+        }
     }
-}, 1000);
+    
+    // if (overlay == NEW_NONE) {
+    //     scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    //     overlay = NONE;
+    // }
+    // else if (overlay != NONE) {
+    //     scene.toggleOverlay(WIDTH, HEIGHT, BLINK_MAP.get(overlay));
+    //     overlay = BLINK_MAP.get(overlay);
+    // }
+}, 500);
+
+
+var control_text = document.createElement('div');
+control_text.style.position = 'absolute';
+control_text.style.width = 100;
+control_text.style.height = 100;
+control_text.innerHTML = "PRESS I FOR INSTRUCTIONS <br /> PRESS SPACE TO START";
+control_text.style.top = 0.57 * HEIGHT + 'px';
+control_text.style.left = 0.425 * WIDTH + 'px';
+control_text.style.fontFamily = 'VT323';
+control_text.style.fontSize = 0.016 * WIDTH + 'px';
+control_text.style.color = "#C9956F";
+control_text.style.textAlign = "center";
+control_text.id = "control_text"
+control_text.style.display = "none";
+document.body.appendChild(control_text);
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
@@ -346,7 +366,11 @@ window.addEventListener('keydown', function (event) {
     if (event.key == 'i') {
         if (playing == NOT_STARTED) {
             overlay = INSTR;
-            // scene.toggleOverlay(WIDTH, HEIGHT, INSTR);
+            scene.toggleOverlay(WIDTH, HEIGHT, INSTR);
+            control_text.innerHTML = "PRESS C FOR CONTROLS";
+            control_text.style.top = 0.6 * HEIGHT + 'px';
+            control_text.style.left = 0.44 * WIDTH + 'px';
+            control_text.style.color = "#905B28";
         }
         else {
             // do nothing if already in play or paused? 
@@ -357,7 +381,11 @@ window.addEventListener('keydown', function (event) {
     if (event.key == 'h') {
         if (playing == NOT_STARTED) {
             overlay = START;
-            // scene.toggleOverlay(WIDTH, HEIGHT, START);
+            control_text.innerHTML = "PRESS I FOR INSTRUCTIONS <br /> PRESS SPACE TO START";
+            scene.toggleOverlay(WIDTH, HEIGHT, START);
+            control_text.style.color = "#C9956F";
+            control_text.style.top = 0.57 * HEIGHT + 'px';
+            control_text.style.left = 0.415 * WIDTH + 'px';
         }
         else {
             // do nothing if already in play or paused? 
@@ -368,7 +396,11 @@ window.addEventListener('keydown', function (event) {
     if (event.key == 'c') {
         if (playing == NOT_STARTED || playing == PAUSED) {
             overlay = CONTROLS;
-            // scene.toggleOverlay(WIDTH, HEIGHT, CONTROLS);
+            scene.toggleOverlay(WIDTH, HEIGHT, CONTROLS);
+            control_text.innerHTML = "PRESS I FOR INSTRUCTIONS <br /> PRESS SPACE TO START";
+            control_text.style.color = "#905B28";
+            control_text.style.top = 0.61 * HEIGHT + 'px';
+            control_text.style.left = 0.425 * WIDTH + 'px';
         }
         else if (playing == PLAYING && !scene.state.submitted) {
             const attempted_order = [...scene.state.order];
@@ -407,7 +439,8 @@ function startGame() {
     scene.addOrder(WIDTH, HEIGHT);
     setSceneOpacity(1);
     overlay = NONE;
-    // scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    control_text.innerHTML = "";
     randOrder();
 
     var score_text = document.createElement('div');
@@ -418,7 +451,7 @@ function startGame() {
     score_text.style.top = 0.09 * HEIGHT + 'px';
     score_text.style.left = 0.83 * WIDTH + 'px';
     score_text.style.fontFamily = 'VT323';
-    score_text.style.fontSize = 30 + 'px';
+    score_text.style.fontSize = 0.021 * WIDTH + 'px';
     score_text.style.color = "#E9967A";
     score_text.id = "score_text"
     document.body.appendChild(score_text);
@@ -431,7 +464,7 @@ function startGame() {
     level_text.style.top = 0.12 * HEIGHT + 'px';
     level_text.style.left = 0.83 * WIDTH + 'px';
     level_text.style.fontFamily = 'VT323';
-    level_text.style.fontSize = 30 + 'px';
+    level_text.style.fontSize = 0.021 * WIDTH + 'px';
     level_text.style.color = "#E9967A";
     level_text.id = "level_text"
     document.body.appendChild(level_text);
@@ -444,7 +477,7 @@ function startGame() {
     live_text.style.top = 0.15 * HEIGHT + 'px';
     live_text.style.left = 0.83 * WIDTH + 'px';
     live_text.style.fontFamily = 'VT323';
-    live_text.style.fontSize = 30 + 'px';
+    live_text.style.fontSize = 0.021 * WIDTH + 'px';
     live_text.style.color = "#E9967A";
     live_text.id = "live_text"
     document.body.appendChild(live_text);
@@ -456,7 +489,11 @@ function pauseGame() {
     playAudio(pause);
     setSceneOpacity(0.5);
     overlay = PAUSED_TITLE;
-    // scene.toggleOverlay(WIDTH, HEIGHT, PAUSED_TITLE);
+    scene.toggleOverlay(WIDTH, HEIGHT, PAUSED_TITLE);
+    control_text.innerHTML = "PRESS SPACE TO RESUME";
+    control_text.style.top = 0.55 * HEIGHT + 'px';
+    control_text.style.left = 0.435 * WIDTH + 'px';
+    control_text.style.color = "#C9956F";
     controls.deactivate();
 }
 
@@ -466,7 +503,8 @@ function restartGame() {
     playAudio(start);
     setSceneOpacity(1);
     overlay = NONE;
-    // scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    scene.toggleOverlay(WIDTH, HEIGHT, NONE);
+    control_text.innerHTML = "";
     controls.activate();
 }
 
@@ -480,7 +518,11 @@ function endGame() {
     scene.state.menu[0].scale.needsUpdate = true;
     setSceneOpacity(0.5);
     overlay = GAME_OVER_TITLE;
-    // scene.toggleOverlay(WIDTH, HEIGHT, GAME_OVER_TITLE);
+    scene.toggleOverlay(WIDTH, HEIGHT, GAME_OVER_TITLE);
+    control_text.innerHTML = "PRESS SPACE TO PLAY AGAIN";
+    control_text.style.top = 0.55 * HEIGHT + 'px';
+    control_text.style.left = 0.425 * WIDTH + 'px';
+    control_text.style.color = "#C9956F";
     controls.deactivate();
     playAudio(game_over_audio);
 }
