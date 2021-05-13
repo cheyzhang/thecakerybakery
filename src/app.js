@@ -308,6 +308,8 @@ window.addEventListener('keydown', function (event) {
             document.getElementById('score_text').innerHTML = 'Score: ' + score;
             document.getElementById('live_text').innerHTML = 'Lives: ' + lives;
             game_number += 1;
+            scene.state.submitted = false;
+            step_size = DEFAULT_STEP_SIZE;
             startGame();
             // window.location.reload();
         }
@@ -402,9 +404,8 @@ function startGame() {
     playAudio(start);
     controls.activate();
 
-    scene.addIngredients(WIDTH, HEIGHT);
-
     if (game_number == 1) {
+        scene.addIngredients(WIDTH, HEIGHT);
         scene.addOrder(WIDTH, HEIGHT);
         var score_text = document.createElement('div');
         score_text.style.position = 'absolute';

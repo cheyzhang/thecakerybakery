@@ -6,7 +6,7 @@ Play The Cakery Bakery [here](https://cz10.github.io/thecakerybakery/).
 
 Created by Alicia Liu and Cheyenne Zhang for COS426: Computer Graphics, Spring 2021.
 
-# Credits
+## Credits
 * Background Music: [Origami Repetika - Love Your Handy Hands](https://freemusicarchive.org/music/Origami_Repetika)
 
 * Sound Effects: [LittleRobotSoundFactory](https://freesound.org/people/LittleRobotSoundFactory/packs/16681/), [Juhani Junkala](https://opengameart.org/content/512-sound-effects-8-bit-style)
