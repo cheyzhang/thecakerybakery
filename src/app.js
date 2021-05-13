@@ -172,8 +172,8 @@ controls.addEventListener('dragend', function (event) {
             console.log(event.object.parent.name);
             scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
 
-            if (event.object.parent.name == "candles") {
-                scene.state.updateList[0].children[0].scale.set(WIDTH*0.1, HEIGHT*0.1 + HEIGHT*0.05, 1);
+            if (event.object.parent.name == "candles" || event.object.parent.name == "strawberry") {
+                scene.state.updateList[0].children[0].scale.set(WIDTH*0.1, HEIGHT*0.1 + HEIGHT*0.018, 1);
                 scene.state.updateList[0].children[0].scale.needsUpdate = true;
             }
             
