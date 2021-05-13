@@ -22,11 +22,9 @@ import LevelUpFile from './assets/sfx/level_up.wav';
 // Variables
 let WIDTH = window.innerWidth;
 let HEIGHT = window.innerHeight;
-console.log(WIDTH);
-console.log(HEIGHT);
 let score = 0;
 let lives = 3;
-let level = 2;
+let level = 3;
 let curr_order;
 let DEFAULT_STEP_SIZE = 0.002 * WIDTH;
 let SUBMITTED_STEP_SIZE = 0.03 * WIDTH;
@@ -121,7 +119,6 @@ const controls = new DragControls(scene.state.draggable, camera, renderer.domEle
 let orig_pos;
 controls.addEventListener('dragstart', function (event) {
     orig_pos = event.object.position.clone();
-    // console.log(orig_pos);
     event.object.material.opacity = 0.6;
     playAudio(blip);
 });
@@ -129,12 +126,9 @@ controls.addEventListener('dragstart', function (event) {
 // on drag end
 controls.addEventListener('dragend', function (event) {
     event.object.material.opacity = 1;
-    console.log(event.object.position.x);
-    console.log(event.object.position.y);
     // let plate_pos = scene.state.updateList[0].children[0].position;
     let plate_pos = scene.state.updateList[scene.state.updateList.length - 1].children[0].position;
     let obj_pos = event.object.position;
-    // console.log(event.object.parent.type);
     let y_thresh = 0; 
     if (scene.state.updateList[0].type == 'base') {
         y_thresh = 10; 
@@ -143,7 +137,6 @@ controls.addEventListener('dragend', function (event) {
         y_thresh = 30; 
     }
     if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 40 + y_thresh) {
-        // console.log(scene.state.updateList[0]);
         // if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
         // uncomment below line for topping on toppings
         // if (scene.state.updateList[0].type == 'plate' && event.object.parent.type == 'base' || scene.state.updateList[0].type == 'base' && event.object.parent.type == 'frosting' || scene.state.updateList[0].type == 'frosting' && event.object.parent.type == 'topping' || scene.state.updateList[0].type == 'topping' && event.object.parent.type == 'topping') {
@@ -153,23 +146,18 @@ controls.addEventListener('dragend', function (event) {
             // scene.state.updateList.push(event.object.parent);
             // remove the new obj which has correctly been added
             scene.remove(event.object.parent);
-            // console.log(scene.state.order);
             scene.state.order.push(new_name);
             let file_path = "";
             for (let i = 0; i < scene.state.order.length; i++) {
-                // console.log(scene.state.order[i]);
                 file_path += FILE_MAP[scene.state.order[i]] + "_";
             }
             file_path = 'src/assets/ingredients/cake_combos/' + file_path.substring(0, file_path.length - 1) + ".png"
-            console.log(file_path);
             const map = new THREE.TextureLoader().load(file_path);
             map.magFilter = THREE.NearestFilter;
 
             let material = new THREE.SpriteMaterial({ map: map });
             scene.state.updateList[0].children[0].material = material;
             scene.state.updateList[0].children[0].material.needsUpdate = true;
-            console.log(scene.state.updateList[0].type);
-            console.log(event.object.parent.name);
             scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
 
             if (event.object.parent.name == "candles") {
@@ -299,11 +287,9 @@ window.addEventListener('keydown', function (event) {
     // mute
     if (event.key == 'm') {
         if (muted) {
-            console.log('unmuting');
             scene.showNotification(UNMUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
         }
         else {
-            console.log('muting');
             scene.showNotification(MUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
         }
         muted = !muted;
@@ -483,7 +469,7 @@ function setSceneOpacity(value) {
             obj.material.opacity = value;
         }
         // overlay
-        else if (obj.type == "overlay") {
+        else if (obj.type == "overlay" || obj.type == "dots" || obj.type == "steam") {
             // pass
         }
         // ingredients
@@ -516,7 +502,6 @@ function randOrder() {
         order.push(TOPPINGS[Math.floor(Math.random() * 3)]);
     }
     curr_order = order;
-    console.log("CURR ORDER: " + order);
 
     let file_path = 'src/assets/ingredients/cake_combos/p_';
     for (let i = 0; i < order.length; i++) {
@@ -526,13 +511,18 @@ function randOrder() {
         }
     }
     file_path += ".png";
-    // console.log(file_path)
 
     const map = new THREE.TextureLoader().load(file_path);
     let material = new THREE.SpriteMaterial({ map: map });
     scene.state.menu[0].material = material;
     scene.state.menu[0].material.needsUpdate = true;
     scene.state.menu[0].scale.set(WIDTH * 0.06, HEIGHT * 0.06, 1);
+    if (order[2] == "candles") {
+        scene.state.menu[0].scale.set(WIDTH * 0.06, HEIGHT * 0.06 + HEIGHT * 0.005, 1);
+    }
+    if (order[2] == "strawberry") {
+        scene.state.menu[0].scale.set(WIDTH * 0.06, HEIGHT * 0.06 + HEIGHT * 0.0025, 1);
+    }
     scene.state.menu[0].scale.needsUpdate = true;
 }
 
@@ -549,8 +539,6 @@ function submitOrder(newStepSize) {
         return;
     }
     for (let i = 0; i < len; i++) {
-        // console.log(curr_order[i]);
-        // console.log(attempted_order[i])
         if (curr_order[i] != attempted_order[i]) {
             incorrectOrder(newStepSize);
             return;
@@ -580,7 +568,6 @@ function correctOrder(newStepSize) {
     }
     else if (level == 3) {
         DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 0.00048 * WIDTH;
-        console.log(DEFAULT_STEP_SIZE);
     }
     // add level 4 for multiple toppings?
     playAudio(correct);
