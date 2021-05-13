@@ -15,7 +15,7 @@ class VanillaCake extends Group {
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
-        sprite.scale.set( width * 0.075, height * 0.075, 1 );
+        sprite.scale.set( width * 0.085, height * 0.085, 1 );
         sprite.position.z = 0; 
         sprite.position.x = x; 
         sprite.position.y = y;

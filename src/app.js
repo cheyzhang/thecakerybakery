@@ -51,24 +51,7 @@ const CONTROLS = 2;
 const PAUSED_TITLE = 3;
 const GAME_OVER_TITLE = 4;
 const NONE = 5;
-// const START_BLINK = 6;
-// const INSTR_BLINK = 7;
-// const CONTROLS_BLINK = 8;
-// const PAUSED_BLINK = 9;
-// const GAME_OVER_BLINK = 10;
-// const NEW_NONE = 11;
 let overlay = START;
-// const BLINK_MAP = new Map();
-// BLINK_MAP.set(START, START_BLINK);
-// BLINK_MAP.set(INSTR, INSTR_BLINK);
-// BLINK_MAP.set(CONTROLS, CONTROLS_BLINK);
-// BLINK_MAP.set(PAUSED_TITLE, PAUSED_BLINK);
-// BLINK_MAP.set(GAME_OVER_TITLE, GAME_OVER_BLINK);
-// BLINK_MAP.set(START_BLINK, START);
-// BLINK_MAP.set(INSTR_BLINK, INSTR);
-// BLINK_MAP.set(CONTROLS_BLINK, CONTROLS);
-// BLINK_MAP.set(PAUSED_BLINK, PAUSED_TITLE);
-// BLINK_MAP.set(GAME_OVER_BLINK, GAME_OVER_TITLE);
 
 // mapping to cake combo files
 const FILE_MAP = {
@@ -181,13 +164,6 @@ controls.addEventListener('dragend', function (event) {
             console.log(file_path);
             const map = new THREE.TextureLoader().load(file_path);
             map.magFilter = THREE.NearestFilter;
-            // let map;  
-            // if (event.object.parent.name == "chocolate_cake") {
-            //     map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_cc.png' ); 
-            // }
-            // else if (event.object.parent.name == "vanilla_cake") {
-            //     map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_yc.png' );  
-            // }
 
             let material = new THREE.SpriteMaterial({ map: map });
             scene.state.updateList[0].children[0].material = material;
@@ -200,43 +176,7 @@ controls.addEventListener('dragend', function (event) {
                 scene.state.updateList[0].children[0].scale.set(WIDTH*0.1, HEIGHT*0.1 + HEIGHT*0.05, 1);
                 scene.state.updateList[0].children[0].scale.needsUpdate = true;
             }
-            // scale the images properly
-            // switch (scene.state.updateList[0].type) {
-            //     case "plate":
-            //         scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
-            //         console.log("new: base");
-            //         break;
-            //     case "base":
-            //         scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
-            //         console.log("new: frosting");
-            //         break;
-            //     case "frosting":
-            //         switch (event.object.parent.name) {
-            //             case "candles":
-            //                 console.log(scene.state.updateList[0].children[0]);
-            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.2, HEIGHT * 0.8, 1);
-            //                 scene.state.updateList[0].children[0].scale.needsUpdate = true;
-            //                 console.log("new: candles");
-            //                 console.log(scene.state.updateList[0].children[0].scale);
-            //                 break;
-            //             case "sprinkles":
-            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
-            //                 console.log("new: sprinkles");
-            //                 break;
-            //             case "strawberry":
-            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.12, HEIGHT * 0.12, 1);
-            //                 console.log("new: strawberry");
-            //                 break;
-            //             default:
-            //                 scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
-            //                 break;
-            //         }
-            //     default:
-            //         scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
-            //         break;
-            // }
-            // console.log(scene.state.updateList[0].children[0].scale);
-            // scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            
             scene.state.updateList[0].children[0].scale.needsUpdate = true;
             if (scene.state.updateList[0].type == "plate") {
                 scene.state.updateList[0].children[0].position.y += 17;
@@ -277,15 +217,6 @@ let blinking = setInterval(function () {
             control_text.style.display = 'none';
         }
     }
-    
-    // if (overlay == NEW_NONE) {
-    //     scene.toggleOverlay(WIDTH, HEIGHT, NONE);
-    //     overlay = NONE;
-    // }
-    // else if (overlay != NONE) {
-    //     scene.toggleOverlay(WIDTH, HEIGHT, BLINK_MAP.get(overlay));
-    //     overlay = BLINK_MAP.get(overlay);
-    // }
 }, 500);
 
 
@@ -458,7 +389,7 @@ function startGame() {
     score_text.style.height = 100;
     score_text.innerHTML = "Score: " + score;
     score_text.style.top = 0.09 * HEIGHT + 'px';
-    score_text.style.left = 0.83 * WIDTH + 'px';
+    score_text.style.left = 0.86 * WIDTH + 'px';
     score_text.style.fontFamily = 'VT323';
     score_text.style.fontSize = 0.021 * WIDTH + 'px';
     score_text.style.color = "#E9967A";
@@ -471,7 +402,7 @@ function startGame() {
     level_text.style.height = 100;
     level_text.innerHTML = "Level: " + level;
     level_text.style.top = 0.12 * HEIGHT + 'px';
-    level_text.style.left = 0.83 * WIDTH + 'px';
+    level_text.style.left = 0.86 * WIDTH + 'px';
     level_text.style.fontFamily = 'VT323';
     level_text.style.fontSize = 0.021 * WIDTH + 'px';
     level_text.style.color = "#E9967A";
@@ -484,7 +415,7 @@ function startGame() {
     live_text.style.height = 100;
     live_text.innerHTML = "Lives: " + lives;
     live_text.style.top = 0.15 * HEIGHT + 'px';
-    live_text.style.left = 0.83 * WIDTH + 'px';
+    live_text.style.left = 0.86 * WIDTH + 'px';
     live_text.style.fontFamily = 'VT323';
     live_text.style.fontSize = 0.021 * WIDTH + 'px';
     live_text.style.color = "#E9967A";
@@ -608,7 +539,6 @@ function submitOrder(newStepSize) {
     const len = curr_order.length;
     if (attempted_order.length != len) {
         incorrectOrder(newStepSize);
-        // scene.clearOrder(WIDTH, HEIGHT);
         return;
     }
     for (let i = 0; i < len; i++) {
@@ -616,13 +546,11 @@ function submitOrder(newStepSize) {
         // console.log(attempted_order[i])
         if (curr_order[i] != attempted_order[i]) {
             incorrectOrder(newStepSize);
-            // scene.clearOrder(WIDTH, HEIGHT);
             return;
         }
     }
     // CORRECT ORDER
     correctOrder(newStepSize);
-    // scene.clearOrder(WIDTH, HEIGHT);
 }
 
 function correctOrder(newStepSize) {

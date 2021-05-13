@@ -58,7 +58,7 @@ class KitchenScene extends Scene {
         // 16000 x 10400
         // let ratio = 0.65;
         let ratio = height / width;
-        let new_width = width * 0.6;
+        let new_width = width * 0.7;
         sprite.scale.set(new_width, ratio * new_width, 1);
         // sprite.scale.set(width / 16000, height / 10400, 1);
         console.log(sprite.scale);
@@ -77,10 +77,8 @@ class KitchenScene extends Scene {
         if (this.state.updateList.length == 0) {
             return;
         }
-        // console.log(this.state.updateList[0].children[0].position);
         // if the plate is offscreen
         if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
-            // this.clearOrder(WIDTH, HEIGHT);
             this.state.atEnd = true;
             this.state.updateList[0].update(timeStamp, stepSize, WIDTH);
         }
@@ -100,7 +98,7 @@ class KitchenScene extends Scene {
     }
 
     addIngredients(width, height) {
-        let plate = new Plate(-width / 3, -0.09 * height, width, height);
+        let plate = new Plate(-width / 3, -0.07 * height, width, height);
         this.add(plate);
         this.addToUpdateList(plate);
         // this.state.draggable.push(curr_plate);
@@ -120,28 +118,28 @@ class KitchenScene extends Scene {
         for (const item of ingredients) {
             switch (item) {
                 case ALL_INGREDIENTS[0]:
-                    new_item = new ChocolateCake(-0.114 * width, -0.26 * height, width, height);
+                    new_item = new ChocolateCake(-0.1325 * width, -0.255 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[1]:
-                    new_item = new VanillaCake(-0.114 * width, -0.19 * height, width, height);
+                    new_item = new VanillaCake(-0.1325 * width, -0.18 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[2]:
-                    new_item = new ChocolateFrosting(0.01 * width, -0.22 * height, width, height);
+                    new_item = new ChocolateFrosting(0.01 * width, -0.23 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[3]:
                     new_item = new MatchaFrosting(0.01 * width, -0.18 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[4]:
-                    new_item = new StrawberryFrosting(0.01 * width, -0.26 * height, width, height);
+                    new_item = new StrawberryFrosting(0.01 * width, -0.275 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[5]:
-                    new_item = new Candles(0.124 * width, -0.215 * height, width, height);
+                    new_item = new Candles(0.15 * width, -0.2 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[6]:
-                    new_item = new Sprinkles(0.17 * width, -0.215 * height, width, height);
+                    new_item = new Sprinkles(0.178 * width, -0.215 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[7]:
-                    new_item = new Strawberry(0.091 * width, -0.215 * height, width, height);
+                    new_item = new Strawberry(0.107 * width, -0.21 * height, width, height);
                     break;
             }
             this.add(new_item);
@@ -172,8 +170,8 @@ class KitchenScene extends Scene {
         let material = new THREE.SpriteMaterial({ map: map });
         let sprite = new THREE.Sprite(material);
         sprite.scale.set(width * 0.06, height * 0.06, 1);
-        sprite.position.x = -0.173 * width;
-        sprite.position.y = 0.081 * height;
+        sprite.position.x = -0.2 * width;
+        sprite.position.y = 0.11 * height;
         sprite.position.z = -1;
         this.add(sprite);
         this.state.menu.push(sprite);
