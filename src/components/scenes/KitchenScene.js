@@ -48,7 +48,7 @@ class KitchenScene extends Scene {
         this.background = new Color(0xF4E8AE);
 
         // add background
-        let map = new THREE.TextureLoader().load('src/assets/bg_no_dots.png');
+        let map = new THREE.TextureLoader().load('src/assets/bg_longer.png');
         map.minfilter = THREE.LinearMipMapLinearFilter;
         map.generateMipmaps = false;
         map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
@@ -123,10 +123,10 @@ class KitchenScene extends Scene {
                 }
             }
         }
-        if (this.state.count%10 == 0) {
-            this.addDots(WIDTH, HEIGHT); 
-        }
-        this.state.count += 1; 
+        // if (this.state.count%10 == 0) {
+        //     this.addDots(WIDTH, HEIGHT); 
+        // }
+        // this.state.count += 1; 
     }
 
     addDots(width, height) {      
