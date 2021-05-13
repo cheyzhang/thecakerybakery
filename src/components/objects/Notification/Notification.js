@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Group, Mesh, BoxBufferGeometry, MeshLambertMaterial } from 'three';
+import { Group } from 'three';
 const a = 4;
 
 class Notification extends Group {
@@ -33,7 +33,6 @@ class Notification extends Group {
             this.state.startTime = timeStamp;
         }
         const time = (timeStamp - this.state.startTime) / 1000;
-        console.log(time);
         if (this.children[0].material.opacity < 0.04) {
             this.state.startTime = undefined;
             return 1;
