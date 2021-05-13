@@ -18,6 +18,7 @@ import PauseFile from './assets/sfx/pause.wav';
 import ErrorFile from './assets/sfx/error.wav';
 import GameOverFile from './assets/sfx/game_over.wav';
 import LevelUpFile from './assets/sfx/level_up.wav';
+import BackgroundMusicFile from './assets/sfx/bgmusic.mp3';
 
 // Variables
 let WIDTH = window.innerWidth;
@@ -26,7 +27,7 @@ console.log(WIDTH);
 console.log(HEIGHT);
 let score = 0;
 let lives = 3;
-let level = 2;
+let level = 1;
 let curr_order;
 let DEFAULT_STEP_SIZE = 0.002 * WIDTH;
 let SUBMITTED_STEP_SIZE = 0.03 * WIDTH;
@@ -75,6 +76,8 @@ const correct = new Audio(CorrectFile);
 const wrong = new Audio(WrongFile);
 const game_over_audio = new Audio(GameOverFile);
 const level_up = new Audio(LevelUpFile);
+const bgmusic = new Audio(BackgroundMusicFile);
+bgmusic.loop = true;
 
 // Initialize core ThreeJS components
 const scene = new KitchenScene(WIDTH, HEIGHT);
@@ -207,6 +210,9 @@ controls.addEventListener('dragend', function (event) {
 
 controls.deactivate();
 
+bgmusic.load();
+playAudio(bgmusic);
+
 // make titles blink
 let blinking = setInterval(function () {
     if (overlay != NONE) {
@@ -218,7 +224,6 @@ let blinking = setInterval(function () {
         }
     }
 }, 500);
-
 
 var control_text = document.createElement('div');
 control_text.style.position = 'absolute';
@@ -238,6 +243,7 @@ document.body.appendChild(control_text);
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20) {
+        // console.log(step_size);
         scene.update(timeStamp, step_size, WIDTH, HEIGHT, playing);
         if (scene.state.atEnd) {
             if (scene.state.submitted) {
@@ -260,6 +266,7 @@ window.requestAnimationFrame(onAnimationFrameHandler);
 
 // Resize Handler
 const windowResizeHandler = () => {
+    // window.location.reload();
     const { innerHeight, innerWidth } = window;
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight;
@@ -268,6 +275,26 @@ const windowResizeHandler = () => {
     DEFAULT_STEP_SIZE = 0.002 * WIDTH;
     SUBMITTED_STEP_SIZE = 0.03 * WIDTH;
     camera.updateProjectionMatrix();
+    if (overlay == INSTR) {
+        control_text.style.top = 0.6 * HEIGHT + 'px';
+        control_text.style.left = 0.44 * WIDTH + 'px';
+    }
+    else if (overlay == CONTROLS) {
+        control_text.style.top = 0.61 * HEIGHT + 'px';
+        control_text.style.left = 0.425 * WIDTH + 'px';
+    }
+    else if (overlay == PAUSED_TITLE) {
+        control_text.style.top = 0.55 * HEIGHT + 'px';
+        control_text.style.left = 0.435 * WIDTH + 'px';
+    }
+    else if (overlay == START) {
+        control_text.style.top = 0.57 * HEIGHT + 'px';
+        control_text.style.left = 0.415 * WIDTH + 'px';
+    }
+    else if (overlay == GAME_OVER_TITLE) {
+        control_text.style.top = 0.55 * HEIGHT + 'px';
+        control_text.style.left = 0.425 * WIDTH + 'px';
+    }
 };
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
@@ -292,10 +319,12 @@ window.addEventListener('keydown', function (event) {
     // mute
     if (event.key == 'm') {
         if (muted) {
+            bgmusic.play();
             console.log('unmuting');
             scene.showNotification(UNMUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
         }
         else {
+            bgmusic.pause();
             console.log('muting');
             scene.showNotification(MUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
         }
@@ -565,13 +594,15 @@ function correctOrder(newStepSize) {
             level = 3;
             DEFAULT_STEP_SIZE = 0.0033 * WIDTH;
             playAudio(level_up);
-            scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH * 0.5, HEIGHT);
+            scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH * 2, HEIGHT);
         }
         else {
             DEFAULT_STEP_SIZE += 0.00048 * WIDTH;
         }
     }
     else if (level == 3) {
+        console.log(DEFAULT_STEP_SIZE);
+        console.log(Math.floor((score - 1000) / 500) * 0.00048 * WIDTH);
         DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 0.00048 * WIDTH;
         console.log(DEFAULT_STEP_SIZE);
     }
