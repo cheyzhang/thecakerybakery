@@ -181,33 +181,18 @@ class KitchenScene extends Scene {
         let file;
         switch (value) {
             case START:
-            //     file = 'src/assets/overlays/welcome_page.png';
-            //     break;
-            // case START_BLINK:
                 file = 'src/assets/overlays/welcome_page_blink.png';
                 break;
             case INSTR:
-            //     file = 'src/assets/overlays/instructions.png';
-            //     break;
-            // case INSTR_BLINK:
                 file = 'src/assets/overlays/instructions_blink.png';
                 break;
             case CONTROLS:
-            //     file = 'src/assets/overlays/controls.png';
-            //     break;
-            // case CONTROLS_BLINK:
                 file = 'src/assets/overlays/controls_blink.png';
                 break;
             case PAUSED_TITLE:
-            //     file = 'src/assets/overlays/paused.png';
-            //     break;
-            // case PAUSED_BLINK:
                 file = 'src/assets/overlays/paused_blink.png';
                 break;
             case GAME_OVER_TITLE:
-            //     file = 'src/assets/overlays/game_over.png';
-            //     break;
-            // case GAME_OVER_BLINK:
                 file = 'src/assets/overlays/game_over_blink.png';
                 break;
             case NONE:
@@ -235,7 +220,6 @@ class KitchenScene extends Scene {
         }
         // else make a completely new sprite
         const sprite = new THREE.Sprite(material);
-        // console.log(sprite);
         console.log("new sprite");
         // 336 x 207 = ratio of 0.62
         const new_width = Math.max(350, width * 0.2);
