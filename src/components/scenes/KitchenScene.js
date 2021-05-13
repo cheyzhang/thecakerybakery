@@ -133,7 +133,7 @@ class KitchenScene extends Scene {
                     new_item = new StrawberryFrosting(0.01 * width, -0.275 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[5]:
-                    new_item = new Candles(0.15 * width, -0.2 * height, width, height);
+                    new_item = new Candles(0.138 * width, -0.215 * height, width, height);
                     break;
                 case ALL_INGREDIENTS[6]:
                     new_item = new Sprinkles(0.178 * width, -0.215 * height, width, height);

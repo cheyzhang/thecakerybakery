@@ -172,8 +172,15 @@ controls.addEventListener('dragend', function (event) {
             console.log(event.object.parent.name);
             scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
 
-            if (event.object.parent.name == "candles" || event.object.parent.name == "strawberry") {
-                scene.state.updateList[0].children[0].scale.set(WIDTH*0.1, HEIGHT*0.1 + HEIGHT*0.018, 1);
+            if (event.object.parent.name == "candles") {
+                scene.state.updateList[0].children[0].scale.set(WIDTH*0.1, HEIGHT*0.1 + HEIGHT*0.019, 1);
+                scene.state.updateList[0].children[0].position.y += HEIGHT*0.0075;
+                scene.state.updateList[0].children[0].scale.needsUpdate = true;
+            }
+
+            if (event.object.parent.name == "strawberry") {
+                scene.state.updateList[0].children[0].scale.set(WIDTH*0.1, HEIGHT*0.1 + HEIGHT*0.015, 1);
+                scene.state.updateList[0].children[0].position.y += HEIGHT*0.0095;
                 scene.state.updateList[0].children[0].scale.needsUpdate = true;
             }
             
@@ -565,7 +572,7 @@ function correctOrder(newStepSize) {
             level = 3;
             DEFAULT_STEP_SIZE = 0.0033 * WIDTH;
             playAudio(level_up);
-            scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH * 0.5, HEIGHT);
+            scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH * 2, HEIGHT);
         }
         else {
             DEFAULT_STEP_SIZE += 0.00048 * WIDTH;
