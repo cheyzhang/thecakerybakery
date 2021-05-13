@@ -58,7 +58,7 @@ class KitchenScene extends Scene {
         // 16000 x 10400
         // let ratio = 0.65;
         let ratio = height / width;
-        let new_width = width * 0.6;
+        let new_width = width * 0.7;
         sprite.scale.set(new_width, ratio * new_width, 1);
         // sprite.scale.set(width / 16000, height / 10400, 1);
         console.log(sprite.scale);
