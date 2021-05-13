@@ -39,14 +39,20 @@ class KitchenScene extends Scene {
             order: [],
             atEnd: false,
             submitted: false,
-            menu: []
+            menu: [],
+            flip: false,
+            count: 0,
         };
 
         // Set background to a nice color
         this.background = new Color(0xF4E8AE);
 
         // add background
-        let map = new THREE.TextureLoader().load('src/assets/bg_longer.png');
+        // let map = new THREE.TextureLoader().load('src/assets/bg_longer.png');
+        let map = new THREE.TextureLoader().load('src/assets/bg_no_dots.png');
+        map.minfilter = THREE.LinearMipMapLinearFilter;
+        map.generateMipmaps = false;
+        map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
         map.minFilter = THREE.LinearFilter;
         let material = new THREE.SpriteMaterial({ map: map });
         let sprite = new THREE.Sprite(material);
@@ -55,6 +61,35 @@ class KitchenScene extends Scene {
         sprite.scale.set(new_width, ratio * new_width, 1);
         sprite.position.z = -1;
         this.add(sprite);
+
+        // add steam
+        map = new THREE.TextureLoader().load('src/assets/bg_components/steam1.png');
+        map.minfilter = THREE.LinearMipMapLinearFilter;
+        map.generateMipmaps = false;
+        map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
+        map.minFilter = THREE.LinearFilter;
+        material = new THREE.SpriteMaterial({ map: map });
+        sprite = new THREE.Sprite(material);
+        sprite.scale.set(width*0.05, height*0.12, 1);
+        sprite.position.x = width*0.265;
+        sprite.position.y = height*0.035; 
+        sprite.position.z = -1;
+        sprite.type = "steam"; 
+        this.add(sprite);
+
+        // add dots
+        map = new THREE.TextureLoader().load('src/assets/bg_components/dots2.png');
+        map.minfilter = THREE.LinearMipMapLinearFilter;
+        map.generateMipmaps = false;
+        map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
+        map.minFilter = THREE.LinearFilter;
+        material = new THREE.SpriteMaterial({ map: map });
+        sprite = new THREE.Sprite(material);
+        sprite.scale.set(new_width, ratio * new_width, 1);
+        sprite.position.z = -1;
+        sprite.type = "dots"; 
+        this.add(sprite);
+
 
         // add start screen
         this.toggleOverlay(width, height, START);
@@ -79,13 +114,40 @@ class KitchenScene extends Scene {
                 // only notifications updated when not playing
                 if (playing == PLAYING || obj.type == 'notification') {
                     if (obj.update(timeStamp, stepSize, WIDTH) == 1) {
-                        // console.log("removing notif");
                         this.remove(obj);
                         this.state.updateList.splice(this.state.updateList.indexOf(obj), 1);
                     }
                 }
             }
         }
+        // if (this.state.count%10 == 0) {
+        //     this.addDots(WIDTH, HEIGHT); 
+        // }
+        // this.state.count += 1; 
+    }
+
+    addDots(width, height) {      
+        // add dots 
+        let map; 
+        if (this.state.flip) {
+            map = new THREE.TextureLoader().load('src/assets/bg_components/dots1.png');
+        }
+        else {
+            map = new THREE.TextureLoader().load('src/assets/bg_components/dots2.png');
+        }
+
+        for (const obj of this.children) {
+            if (obj.type == "dots") {
+                map.minfilter = THREE.LinearMipMapLinearFilter;
+                map.magFilter = THREE.NearestFilter;
+                let material = new THREE.SpriteMaterial({ map: map });
+                obj.material = material;
+                obj.needsUpdate = true;
+                break;
+            }
+        }
+
+        this.state.flip = !this.state.flip; 
     }
 
     addIngredients(width, height) {
@@ -174,7 +236,6 @@ class KitchenScene extends Scene {
 
     // toggle the title screens
     toggleOverlay(width, height, value) {
-        // console.log(this.children);
         let file;
         switch (value) {
             case START:

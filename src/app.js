@@ -123,7 +123,6 @@ const controls = new DragControls(scene.state.draggable, camera, renderer.domEle
 let orig_pos;
 controls.addEventListener('dragstart', function (event) {
     orig_pos = event.object.position.clone();
-    // console.log(orig_pos);
     event.object.material.opacity = 0.6;
     playAudio(blip);
 });
@@ -508,7 +507,7 @@ function setSceneOpacity(value) {
             obj.material.opacity = value;
         }
         // overlay
-        else if (obj.type == "overlay") {
+        else if (obj.type == "overlay" || obj.type == "dots" || obj.type == "steam") {
             // pass
         }
         // ingredients
@@ -556,6 +555,12 @@ function randOrder() {
     scene.state.menu[0].material = material;
     scene.state.menu[0].material.needsUpdate = true;
     scene.state.menu[0].scale.set(WIDTH * 0.06, HEIGHT * 0.06, 1);
+    if (order[2] == "candles") {
+        scene.state.menu[0].scale.set(WIDTH * 0.06, HEIGHT * 0.06 + HEIGHT * 0.005, 1);
+    }
+    if (order[2] == "strawberry") {
+        scene.state.menu[0].scale.set(WIDTH * 0.06, HEIGHT * 0.06 + HEIGHT * 0.0025, 1);
+    }
     scene.state.menu[0].scale.needsUpdate = true;
 }
 
