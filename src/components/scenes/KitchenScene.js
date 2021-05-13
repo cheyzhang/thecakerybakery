@@ -88,6 +88,9 @@ class KitchenScene extends Scene {
             for (const obj of this.state.updateList) {
                 // only notifications updated when not playing
                 if (playing == PLAYING || obj.type == 'notification') {
+                    if (obj.type == 'notification') {
+                        console.log('notif here')
+                    }
                     if (obj.update(timeStamp, stepSize, WIDTH) == 1) {
                         console.log("removing notif");
                         this.remove(obj);
@@ -159,7 +162,7 @@ class KitchenScene extends Scene {
             this.state.updateList[0].children[0].scale.needsUpdate = true;
         }
         this.state.updateList[0].type = "plate";
-        this.state.updateList = this.state.updateList.splice(0, 1);
+        // this.state.updateList = this.state.updateList.splice(0, 1);
         this.state.order = ["plate"];
     }
 
