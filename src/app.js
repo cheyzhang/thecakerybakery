@@ -146,8 +146,8 @@ controls.addEventListener('dragstart', function (event) {
 // on drag end
 controls.addEventListener('dragend', function (event) {
     event.object.material.opacity = 1;
-    // console.log(event.object.position.x);
-    // console.log(event.object.position.y);
+    console.log(event.object.position.x);
+    console.log(event.object.position.y);
     // let plate_pos = scene.state.updateList[0].children[0].position;
     let plate_pos = scene.state.updateList[scene.state.updateList.length - 1].children[0].position;
     let obj_pos = event.object.position;
@@ -180,6 +180,7 @@ controls.addEventListener('dragend', function (event) {
             file_path = 'src/assets/ingredients/cake_combos/' + file_path.substring(0, file_path.length - 1) + ".png"
             console.log(file_path);
             const map = new THREE.TextureLoader().load(file_path);
+            map.magFilter = THREE.NearestFilter;
             // let map;  
             // if (event.object.parent.name == "chocolate_cake") {
             //     map = new THREE.TextureLoader().load( 'src/assets/ingredients/plate_cake/p_cc.png' ); 
@@ -310,6 +311,7 @@ const onAnimationFrameHandler = (timeStamp) => {
                 submitOrder(DEFAULT_STEP_SIZE);
                 scene.state.submitted = false;
             }
+            scene.clearOrder(WIDTH, HEIGHT);
             randOrder();
         }
     }
@@ -512,6 +514,7 @@ function restartGame() {
 function endGame() {
     playing = GAME_OVER;
     const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
+    map.magFilter = THREE.NearestFilter;
     let material = new THREE.SpriteMaterial({ map: map });
     scene.state.menu[0].material = material;
     scene.state.menu[0].material.needsUpdate = true;
@@ -597,18 +600,23 @@ function submitOrder(newStepSize) {
     attempted_order.splice(0, 1);
     scene.replenishIngredients(WIDTH, HEIGHT, attempted_order);
     const len = curr_order.length;
+    if (attempted_order.length != len) {
+        incorrectOrder(newStepSize);
+        // scene.clearOrder(WIDTH, HEIGHT);
+        return;
+    }
     for (let i = 0; i < len; i++) {
         // console.log(curr_order[i]);
         // console.log(attempted_order[i])
         if (curr_order[i] != attempted_order[i]) {
             incorrectOrder(newStepSize);
-            scene.clearOrder(WIDTH, HEIGHT);
+            // scene.clearOrder(WIDTH, HEIGHT);
             return;
         }
     }
     // CORRECT ORDER
     correctOrder(newStepSize);
-    scene.clearOrder(WIDTH, HEIGHT);
+    // scene.clearOrder(WIDTH, HEIGHT);
 }
 
 function correctOrder(newStepSize) {
@@ -616,23 +624,21 @@ function correctOrder(newStepSize) {
     if (level == 1 && score >= 400) {
         level = 2;
         playAudio(level_up);
-        console.log(scene.state.updateList);
-        scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH*2, HEIGHT);
-        console.log(scene.state.updateList);
+        scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH * 2, HEIGHT);
     }
     else if (level == 2) {
         if (score >= 1000) {
             level = 3;
-            DEFAULT_STEP_SIZE = 5.5;
+            DEFAULT_STEP_SIZE = 0.0033 * WIDTH;
             playAudio(level_up);
-            scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH*0.5, HEIGHT);
+            scene.showNotification(LEVEL_UP_FILE , 0, 0, WIDTH * 0.5, HEIGHT);
         }
         else {
-            DEFAULT_STEP_SIZE += 0.8;
+            DEFAULT_STEP_SIZE += 0.00048 * WIDTH;
         }
     }
     else if (level == 3) {
-        DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 0.8;
+        DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 0.00048 * WIDTH;
         console.log(DEFAULT_STEP_SIZE);
     }
     // add level 4 for multiple toppings?
@@ -640,6 +646,7 @@ function correctOrder(newStepSize) {
     step_size = newStepSize;
 
     const map = new THREE.TextureLoader().load('src/assets/results/correct.png');
+    map.magFilter = THREE.NearestFilter;
     let material = new THREE.SpriteMaterial({ map: map });
     scene.state.menu[0].material = material;
     scene.state.menu[0].material.needsUpdate = true;
@@ -656,6 +663,7 @@ function incorrectOrder(newStepSize) {
     document.getElementById('live_text').innerHTML = 'Lives: ' + lives;
     playAudio(wrong);
     const map = new THREE.TextureLoader().load('src/assets/results/wrong.png');
+    map.magFilter = THREE.NearestFilter;
     let material = new THREE.SpriteMaterial({ map: map });
     scene.state.menu[0].material = material;
     scene.state.menu[0].material.needsUpdate = true;

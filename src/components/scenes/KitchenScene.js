@@ -77,6 +77,7 @@ class KitchenScene extends Scene {
         if (this.state.updateList.length == 0) {
             return;
         }
+        // console.log(this.state.updateList[0].children[0].position);
         // if the plate is offscreen
         if (this.state.updateList[0].children[0].position.x >= WIDTH / 3) {
             // this.clearOrder(WIDTH, HEIGHT);
@@ -88,9 +89,6 @@ class KitchenScene extends Scene {
             for (const obj of this.state.updateList) {
                 // only notifications updated when not playing
                 if (playing == PLAYING || obj.type == 'notification') {
-                    if (obj.type == 'notification') {
-                        console.log('notif here')
-                    }
                     if (obj.update(timeStamp, stepSize, WIDTH) == 1) {
                         console.log("removing notif");
                         this.remove(obj);
@@ -102,7 +100,7 @@ class KitchenScene extends Scene {
     }
 
     addIngredients(width, height) {
-        let plate = new Plate(-width / 3, -90, width, height);
+        let plate = new Plate(-width / 3, -0.09 * height, width, height);
         this.add(plate);
         this.addToUpdateList(plate);
         // this.state.draggable.push(curr_plate);
@@ -153,6 +151,8 @@ class KitchenScene extends Scene {
 
     clearOrder(width, height) {
         const map = new THREE.TextureLoader().load('src/assets/plate.png');
+        map.minFilter = THREE.NearestMipmapNearestFilter;
+        map.magFilter = THREE.NearestFilter;
         let material = new THREE.SpriteMaterial({ map: map });
         this.state.updateList[0].children[0].material = material;
         this.state.updateList[0].children[0].material.needsUpdate = true;
@@ -168,11 +168,12 @@ class KitchenScene extends Scene {
 
     addOrder(width, height) {
         let map = new THREE.TextureLoader().load('src/assets/ingredients/cake_combos/p_yc.png');
+        map.magFilter = THREE.NearestFilter;
         let material = new THREE.SpriteMaterial({ map: map });
         let sprite = new THREE.Sprite(material);
         sprite.scale.set(width * 0.06, height * 0.06, 1);
-        sprite.position.x = -250;
-        sprite.position.y = 70;
+        sprite.position.x = -0.173 * width;
+        sprite.position.y = 0.081 * height;
         sprite.position.z = -1;
         this.add(sprite);
         this.state.menu.push(sprite);

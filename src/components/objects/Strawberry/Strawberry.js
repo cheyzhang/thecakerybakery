@@ -10,6 +10,8 @@ class Strawberry extends Group {
         this.type = 'topping';
 
         const map = new THREE.TextureLoader().load( 'src/assets/ingredients/toppings/strawberry.png' );
+        map.minFilter = THREE.NearestMipmapNearestFilter;
+        map.magFilter = THREE.NearestFilter;
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );

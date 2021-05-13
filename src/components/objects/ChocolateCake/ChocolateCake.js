@@ -10,6 +10,7 @@ class ChocolateCake extends Group {
         this.type = 'base';
 
         const map = new THREE.TextureLoader().load( 'src/assets/ingredients/cake/chocolate_cake.png' );
+        map.magFilter = THREE.NearestFilter;
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );

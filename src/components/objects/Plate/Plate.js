@@ -10,6 +10,7 @@ class Plate extends Group {
         this.type = 'plate';
 
         const map = new THREE.TextureLoader().load( 'src/assets/plate.png' );
+        map.magFilter = THREE.NearestFilter;
         const material = new THREE.SpriteMaterial( { map: map } );
         material.emissive = 0xaaaaaa;
         const sprite = new THREE.Sprite( material );
