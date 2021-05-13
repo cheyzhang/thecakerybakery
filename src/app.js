@@ -23,8 +23,6 @@ import BackgroundMusicFile from './assets/sfx/bgmusic.mp3';
 // Variables
 let WIDTH = window.innerWidth;
 let HEIGHT = window.innerHeight;
-console.log(WIDTH);
-console.log(HEIGHT);
 let score = 0;
 let lives = 3;
 let level = 1;
@@ -33,10 +31,11 @@ let DEFAULT_STEP_SIZE = 0.002 * WIDTH;
 let SUBMITTED_STEP_SIZE = 0.03 * WIDTH;
 let step_size = DEFAULT_STEP_SIZE;
 let muted = false;
+let champ_score = 0;
+let game_number = 1;
 const MUTED_NOTIF_FILE = 'src/assets/notifications/muted.png';
 const UNMUTED_NOTIF_FILE = 'src/assets/notifications/unmuted.png';
 const LEVEL_UP_FILE = 'src/assets/notifications/level_up2.png'; 
-// let total_num_orders = 0;
 
 // for playing status
 const NOT_STARTED = 0;
@@ -132,12 +131,10 @@ controls.addEventListener('dragstart', function (event) {
 // on drag end
 controls.addEventListener('dragend', function (event) {
     event.object.material.opacity = 1;
-    console.log(event.object.position.x);
-    console.log(event.object.position.y);
-    // let plate_pos = scene.state.updateList[0].children[0].position;
+    // console.log(event.object.position.x);
+    // console.log(event.object.position.y);
     let plate_pos = scene.state.updateList[scene.state.updateList.length - 1].children[0].position;
     let obj_pos = event.object.position;
-    // console.log(event.object.parent.type);
     let y_thresh = 0; 
     if (scene.state.updateList[0].type == 'base') {
         y_thresh = 10; 
@@ -146,33 +143,23 @@ controls.addEventListener('dragend', function (event) {
         y_thresh = 30; 
     }
     if (obj_pos.x >= plate_pos.x - 60 && obj_pos.x <= plate_pos.x + 60 && obj_pos.y >= plate_pos.y - 30 && obj_pos.y <= plate_pos.y + 40 + y_thresh) {
-        // console.log(scene.state.updateList[0]);
-        // if (scene.state.updateList.length == 1 && event.object.parent.type == 'base' || scene.state.updateList.length == 2 && event.object.parent.type == 'frosting' || scene.state.updateList.length == 3 && event.object.parent.type == 'topping') {
-        // uncomment below line for topping on toppings
-        // if (scene.state.updateList[0].type == 'plate' && event.object.parent.type == 'base' || scene.state.updateList[0].type == 'base' && event.object.parent.type == 'frosting' || scene.state.updateList[0].type == 'frosting' && event.object.parent.type == 'topping' || scene.state.updateList[0].type == 'topping' && event.object.parent.type == 'topping') {
-        if (scene.state.updateList[0].type == 'plate' && event.object.parent.type == 'base' || scene.state.updateList[0].type == 'base' && event.object.parent.type == 'frosting' || scene.state.updateList[0].type == 'frosting' && event.object.parent.type == 'topping') {
+       if (scene.state.updateList[0].type == 'plate' && event.object.parent.type == 'base' || scene.state.updateList[0].type == 'base' && event.object.parent.type == 'frosting' || scene.state.updateList[0].type == 'frosting' && event.object.parent.type == 'topping') {
             const new_type = event.object.parent.type;
             const new_name = event.object.parent.name;
-            // scene.state.updateList.push(event.object.parent);
             // remove the new obj which has correctly been added
             scene.remove(event.object.parent);
-            // console.log(scene.state.order);
             scene.state.order.push(new_name);
             let file_path = "";
             for (let i = 0; i < scene.state.order.length; i++) {
-                // console.log(scene.state.order[i]);
                 file_path += FILE_MAP[scene.state.order[i]] + "_";
             }
             file_path = 'src/assets/ingredients/cake_combos/' + file_path.substring(0, file_path.length - 1) + ".png"
-            console.log(file_path);
             const map = new THREE.TextureLoader().load(file_path);
             map.magFilter = THREE.NearestFilter;
 
             let material = new THREE.SpriteMaterial({ map: map });
             scene.state.updateList[0].children[0].material = material;
             scene.state.updateList[0].children[0].material.needsUpdate = true;
-            console.log(scene.state.updateList[0].type);
-            console.log(event.object.parent.name);
             scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
 
             if (event.object.parent.name == "candles") {
@@ -208,7 +195,6 @@ controls.addEventListener('dragend', function (event) {
             event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
         }
     }
-
     else {
         playAudio(error);
         event.object.position.set(orig_pos.x, orig_pos.y, orig_pos.z);
@@ -216,9 +202,6 @@ controls.addEventListener('dragend', function (event) {
 });
 
 controls.deactivate();
-
-bgmusic.load();
-playAudio(bgmusic);
 
 // make titles blink
 let blinking = setInterval(function () {
@@ -247,10 +230,12 @@ control_text.id = "control_text"
 control_text.style.display = "none";
 document.body.appendChild(control_text);
 
+bgmusic.load();
+playAudio(bgmusic);
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     if (timeStamp % 50 < 20) {
-        // console.log(step_size);
         scene.update(timeStamp, step_size, WIDTH, HEIGHT, playing);
         if (scene.state.atEnd) {
             if (scene.state.submitted) {
@@ -262,7 +247,9 @@ const onAnimationFrameHandler = (timeStamp) => {
                 scene.state.submitted = false;
             }
             scene.clearOrder(WIDTH, HEIGHT);
-            randOrder();
+            if (playing != GAME_OVER) {
+                randOrder();
+            }
         }
     }
     
@@ -273,7 +260,6 @@ window.requestAnimationFrame(onAnimationFrameHandler);
 
 // Resize Handler
 const windowResizeHandler = () => {
-    // window.location.reload();
     const { innerHeight, innerWidth } = window;
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight;
@@ -300,7 +286,7 @@ const windowResizeHandler = () => {
     }
     else if (overlay == GAME_OVER_TITLE) {
         control_text.style.top = 0.55 * HEIGHT + 'px';
-        control_text.style.left = 0.425 * WIDTH + 'px';
+        control_text.style.left = 0.42 * WIDTH + 'px';
     }
 };
 windowResizeHandler();
@@ -316,7 +302,15 @@ window.addEventListener('keydown', function (event) {
             restartGame();
         }
         else if (playing == GAME_OVER) {
-            window.location.reload();
+            score = 0;
+            level = 1;
+            lives = 3;
+            document.getElementById('level_text').innerHTML = 'Level: ' + level;
+            document.getElementById('score_text').innerHTML = 'Score: ' + score;
+            document.getElementById('live_text').innerHTML = 'Lives: ' + lives;
+            game_number += 1;
+            startGame();
+            // window.location.reload();
         }
         else {
             pauseGame();
@@ -327,12 +321,10 @@ window.addEventListener('keydown', function (event) {
     if (event.key == 'm') {
         if (muted) {
             bgmusic.play();
-            console.log('unmuting');
             scene.showNotification(UNMUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
         }
         else {
             bgmusic.pause();
-            console.log('muting');
             scene.showNotification(MUTED_NOTIF_FILE, 0, 0, WIDTH, HEIGHT);
         }
         muted = !muted;
@@ -412,51 +404,53 @@ function startGame() {
     controls.activate();
 
     scene.addIngredients(WIDTH, HEIGHT);
-    scene.addOrder(WIDTH, HEIGHT);
+
+    if (game_number == 1) {
+        scene.addOrder(WIDTH, HEIGHT);
+        var score_text = document.createElement('div');
+        score_text.style.position = 'absolute';
+        score_text.style.width = 100;
+        score_text.style.height = 100;
+        score_text.innerHTML = "Score: " + score;
+        score_text.style.top = 0.09 * HEIGHT + 'px';
+        score_text.style.left = 0.86 * WIDTH + 'px';
+        score_text.style.fontFamily = 'VT323';
+        score_text.style.fontSize = 0.021 * WIDTH + 'px';
+        score_text.style.color = "#E9967A";
+        score_text.id = "score_text"
+        document.body.appendChild(score_text);
+
+        var level_text = document.createElement('div');
+        level_text.style.position = 'absolute';
+        level_text.style.width = 100;
+        level_text.style.height = 100;
+        level_text.innerHTML = "Level: " + level;
+        level_text.style.top = 0.12 * HEIGHT + 'px';
+        level_text.style.left = 0.86 * WIDTH + 'px';
+        level_text.style.fontFamily = 'VT323';
+        level_text.style.fontSize = 0.021 * WIDTH + 'px';
+        level_text.style.color = "#E9967A";
+        level_text.id = "level_text"
+        document.body.appendChild(level_text);
+
+        var live_text = document.createElement('div');
+        live_text.style.position = 'absolute';
+        live_text.style.width = 100;
+        live_text.style.height = 100;
+        live_text.innerHTML = "Lives: " + lives;
+        live_text.style.top = 0.15 * HEIGHT + 'px';
+        live_text.style.left = 0.86 * WIDTH + 'px';
+        live_text.style.fontFamily = 'VT323';
+        live_text.style.fontSize = 0.021 * WIDTH + 'px';
+        live_text.style.color = "#E9967A";
+        live_text.id = "live_text"
+        document.body.appendChild(live_text);
+    }
     setSceneOpacity(1);
     overlay = NONE;
     scene.toggleOverlay(WIDTH, HEIGHT, NONE);
     control_text.innerHTML = "";
     randOrder();
-
-    var score_text = document.createElement('div');
-    score_text.style.position = 'absolute';
-    score_text.style.width = 100;
-    score_text.style.height = 100;
-    score_text.innerHTML = "Score: " + score;
-    score_text.style.top = 0.09 * HEIGHT + 'px';
-    score_text.style.left = 0.86 * WIDTH + 'px';
-    score_text.style.fontFamily = 'VT323';
-    score_text.style.fontSize = 0.021 * WIDTH + 'px';
-    score_text.style.color = "#E9967A";
-    score_text.id = "score_text"
-    document.body.appendChild(score_text);
-
-    var level_text = document.createElement('div');
-    level_text.style.position = 'absolute';
-    level_text.style.width = 100;
-    level_text.style.height = 100;
-    level_text.innerHTML = "Level: " + level;
-    level_text.style.top = 0.12 * HEIGHT + 'px';
-    level_text.style.left = 0.86 * WIDTH + 'px';
-    level_text.style.fontFamily = 'VT323';
-    level_text.style.fontSize = 0.021 * WIDTH + 'px';
-    level_text.style.color = "#E9967A";
-    level_text.id = "level_text"
-    document.body.appendChild(level_text);
-
-    var live_text = document.createElement('div');
-    live_text.style.position = 'absolute';
-    live_text.style.width = 100;
-    live_text.style.height = 100;
-    live_text.innerHTML = "Lives: " + lives;
-    live_text.style.top = 0.15 * HEIGHT + 'px';
-    live_text.style.left = 0.86 * WIDTH + 'px';
-    live_text.style.fontFamily = 'VT323';
-    live_text.style.fontSize = 0.021 * WIDTH + 'px';
-    live_text.style.color = "#E9967A";
-    live_text.id = "live_text"
-    document.body.appendChild(live_text);
 }
 
 // pause the game
@@ -496,12 +490,14 @@ function endGame() {
     setSceneOpacity(0.5);
     overlay = GAME_OVER_TITLE;
     scene.toggleOverlay(WIDTH, HEIGHT, GAME_OVER_TITLE);
-    control_text.innerHTML = "PRESS SPACE TO PLAY AGAIN";
+    champ_score = Math.max(score, champ_score);
+    control_text.innerHTML = "BEST SCORE: " + champ_score + "<br /> PRESS SPACE TO PLAY AGAIN";
     control_text.style.top = 0.55 * HEIGHT + 'px';
-    control_text.style.left = 0.425 * WIDTH + 'px';
+    control_text.style.left = 0.42 * WIDTH + 'px';
     control_text.style.color = "#C9956F";
     controls.deactivate();
     playAudio(game_over_audio);
+    bgmusic.pause();
 }
 
 // set the opacity of all objects in scene
@@ -545,7 +541,6 @@ function randOrder() {
         order.push(TOPPINGS[Math.floor(Math.random() * 3)]);
     }
     curr_order = order;
-    console.log("CURR ORDER: " + order);
 
     let file_path = 'src/assets/ingredients/cake_combos/p_';
     for (let i = 0; i < order.length; i++) {
@@ -555,7 +550,6 @@ function randOrder() {
         }
     }
     file_path += ".png";
-    // console.log(file_path)
 
     const map = new THREE.TextureLoader().load(file_path);
     let material = new THREE.SpriteMaterial({ map: map });
@@ -568,7 +562,6 @@ function randOrder() {
 // check if order is correct and update score/lives
 function submitOrder(newStepSize) {
     scene.state.submitted = true;
-    // total_num_orders += 1;
     const attempted_order = [...scene.state.order];
     attempted_order.splice(0, 1);
     scene.replenishIngredients(WIDTH, HEIGHT, attempted_order);
@@ -578,8 +571,6 @@ function submitOrder(newStepSize) {
         return;
     }
     for (let i = 0; i < len; i++) {
-        // console.log(curr_order[i]);
-        // console.log(attempted_order[i])
         if (curr_order[i] != attempted_order[i]) {
             incorrectOrder(newStepSize);
             return;
@@ -608,10 +599,12 @@ function correctOrder(newStepSize) {
         }
     }
     else if (level == 3) {
-        console.log(DEFAULT_STEP_SIZE);
-        console.log(Math.floor((score - 1000) / 500) * 0.00048 * WIDTH);
-        DEFAULT_STEP_SIZE += Math.floor((score - 1000) / 500) * 0.00048 * WIDTH;
-        console.log(DEFAULT_STEP_SIZE);
+        // const level_score = score - 1000;
+        const level_score = score;
+        if (level_score % 300 == 0 ){
+            DEFAULT_STEP_SIZE += (Math.floor(level_score / 500) + 1) * 0.00024 * WIDTH;
+            console.log("new speed: " + DEFAULT_STEP_SIZE);
+        }
     }
     // add level 4 for multiple toppings?
     playAudio(correct);

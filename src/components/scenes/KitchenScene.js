@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Scene, Color, PlaneBufferGeometry, MeshLambertMaterial, Mesh, TextureLoader, Sprite, SpriteMaterial, FontLoader, TextGeometry } from 'three';
+import { Scene, Color} from 'three';
 import { Notification, Plate, ChocolateCake, VanillaCake, ChocolateFrosting, MatchaFrosting, StrawberryFrosting, Candles, Sprinkles, Strawberry } from 'objects';
 // import { BasicLights, DimLights } from 'lights';
 
@@ -47,21 +47,12 @@ class KitchenScene extends Scene {
 
         // add background
         let map = new THREE.TextureLoader().load('src/assets/bg_longer.png');
-        map.minfilter = THREE.LinearMipMapLinearFilter;
-        map.generateMipmaps = false;
-        map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
         map.minFilter = THREE.LinearFilter;
-        // map.minfilter = THREE.LinearFilter;
         let material = new THREE.SpriteMaterial({ map: map });
         let sprite = new THREE.Sprite(material);
-        console.log(sprite);
-        // 16000 x 10400
-        // let ratio = 0.65;
         let ratio = height / width;
         let new_width = width * 0.7;
         sprite.scale.set(new_width, ratio * new_width, 1);
-        // sprite.scale.set(width / 16000, height / 10400, 1);
-        console.log(sprite.scale);
         sprite.position.z = -1;
         this.add(sprite);
 
@@ -88,7 +79,7 @@ class KitchenScene extends Scene {
                 // only notifications updated when not playing
                 if (playing == PLAYING || obj.type == 'notification') {
                     if (obj.update(timeStamp, stepSize, WIDTH) == 1) {
-                        console.log("removing notif");
+                        // console.log("removing notif");
                         this.remove(obj);
                         this.state.updateList.splice(this.state.updateList.indexOf(obj), 1);
                     }
@@ -98,15 +89,20 @@ class KitchenScene extends Scene {
     }
 
     addIngredients(width, height) {
-        let plate = new Plate(-width / 3, -0.07 * height, width, height);
-        this.add(plate);
-        this.addToUpdateList(plate);
-        // this.state.draggable.push(curr_plate);
-        // plate = new Plate(-150, -90, undefined, WIDTH, HEIGHT);
-        // scene.add(plate);
-        // objects.push(plate);
+        // not the first time playing = move plate to beginning
+        if (this.state.updateList.length != 0) {
+            this.state.updateList[0].children[0].position.x = -width / 3;
+            this.clearOrder(width, height);
+        }
+        // first time playing = create plate
+        else {
+            let plate = new Plate(-width / 3, -0.07 * height, width, height);
+            this.add(plate);
+            this.addToUpdateList(plate);
+            this.state.order.push('plate');   
+        }
 
-        this.state.order.push('plate');
+        console.log(this.state.updateList);
 
         for (let i = 0; i < 2; i++) {
             this.replenishIngredients(width, height, ALL_INGREDIENTS);
@@ -155,12 +151,11 @@ class KitchenScene extends Scene {
         this.state.updateList[0].children[0].material = material;
         this.state.updateList[0].children[0].material.needsUpdate = true;
         if (this.state.updateList[0].type != "plate") {
-            this.state.updateList[0].children[0].position.y -= 17;
+            this.state.updateList[0].children[0].position.y = -0.07 * height;
             this.state.updateList[0].children[0].scale.set(width * 0.105, height * 0.06, 1);
             this.state.updateList[0].children[0].scale.needsUpdate = true;
         }
         this.state.updateList[0].type = "plate";
-        // this.state.updateList = this.state.updateList.splice(0, 1);
         this.state.order = ["plate"];
     }
 
@@ -222,7 +217,6 @@ class KitchenScene extends Scene {
         }
         // else make a completely new sprite
         const sprite = new THREE.Sprite(material);
-        console.log("new sprite");
         // 336 x 207 = ratio of 0.62
         const new_width = Math.max(350, width * 0.2);
         sprite.scale.set(new_width, 0.62 * new_width, 1);
