@@ -26,7 +26,7 @@ console.log(WIDTH);
 console.log(HEIGHT);
 let score = 0;
 let lives = 3;
-let level = 1;
+let level = 2;
 let curr_order;
 let DEFAULT_STEP_SIZE = 0.002 * WIDTH;
 let SUBMITTED_STEP_SIZE = 0.03 * WIDTH;
@@ -194,6 +194,12 @@ controls.addEventListener('dragend', function (event) {
             scene.state.updateList[0].children[0].material.needsUpdate = true;
             console.log(scene.state.updateList[0].type);
             console.log(event.object.parent.name);
+            scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+
+            if (event.object.parent.name == "candles") {
+                scene.state.updateList[0].children[0].scale.set(WIDTH*0.1, HEIGHT*0.1 + HEIGHT*0.05, 1);
+                scene.state.updateList[0].children[0].scale.needsUpdate = true;
+            }
             // scale the images properly
             // switch (scene.state.updateList[0].type) {
             //     case "plate":
@@ -230,7 +236,7 @@ controls.addEventListener('dragend', function (event) {
             //         break;
             // }
             // console.log(scene.state.updateList[0].children[0].scale);
-            scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
+            // scene.state.updateList[0].children[0].scale.set(WIDTH * 0.1, HEIGHT * 0.1, 1);
             scene.state.updateList[0].children[0].scale.needsUpdate = true;
             if (scene.state.updateList[0].type == "plate") {
                 scene.state.updateList[0].children[0].position.y += 17;

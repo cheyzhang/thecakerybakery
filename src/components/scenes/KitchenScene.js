@@ -46,7 +46,7 @@ class KitchenScene extends Scene {
         this.background = new Color(0xF4E8AE);
 
         // add background
-        let map = new THREE.TextureLoader().load('src/assets/bg_with_menu.png');
+        let map = new THREE.TextureLoader().load('src/assets/bg_longer.png');
         map.minfilter = THREE.LinearMipMapLinearFilter;
         map.generateMipmaps = false;
         map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
