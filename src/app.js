@@ -310,6 +310,7 @@ window.addEventListener('keydown', function (event) {
             game_number += 1;
             scene.state.submitted = false;
             step_size = DEFAULT_STEP_SIZE;
+            playAudio(bgmusic);
             startGame();
             // window.location.reload();
         }

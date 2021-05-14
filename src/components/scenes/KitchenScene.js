@@ -40,8 +40,8 @@ class KitchenScene extends Scene {
             atEnd: false,
             submitted: false,
             menu: [],
-            flip: false,
-            count: 0,
+            // flip: false,
+            // count: 0,
         };
 
         // Set background to a nice color
@@ -63,33 +63,32 @@ class KitchenScene extends Scene {
         this.add(sprite);
 
         // add steam
-        map = new THREE.TextureLoader().load('src/assets/bg_components/steam1.png');
-        map.minfilter = THREE.LinearMipMapLinearFilter;
-        map.generateMipmaps = false;
-        map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
-        map.minFilter = THREE.LinearFilter;
-        material = new THREE.SpriteMaterial({ map: map });
-        sprite = new THREE.Sprite(material);
-        sprite.scale.set(width*0.05, height*0.12, 1);
-        sprite.position.x = width*0.265;
-        sprite.position.y = height*0.035; 
-        sprite.position.z = -1;
-        sprite.type = "steam"; 
-        this.add(sprite);
+        // map = new THREE.TextureLoader().load('src/assets/bg_components/steam1.png');
+        // map.minfilter = THREE.LinearMipMapLinearFilter;
+        // map.generateMipmaps = false;
+        // map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
+        // map.minFilter = THREE.LinearFilter;
+        // material = new THREE.SpriteMaterial({ map: map });
+        // sprite = new THREE.Sprite(material);
+        // sprite.scale.set(width*0.05, height*0.12, 1);
+        // sprite.position.x = width*0.265;
+        // sprite.position.y = height*0.035; 
+        // sprite.position.z = -1;
+        // sprite.type = "steam"; 
+        // this.add(sprite);
 
-        // add dots
-        map = new THREE.TextureLoader().load('src/assets/bg_components/dots2.png');
-        map.minfilter = THREE.LinearMipMapLinearFilter;
-        map.generateMipmaps = false;
-        map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
-        map.minFilter = THREE.LinearFilter;
-        material = new THREE.SpriteMaterial({ map: map });
-        sprite = new THREE.Sprite(material);
-        sprite.scale.set(new_width, ratio * new_width, 1);
-        sprite.position.z = -1;
-        sprite.type = "dots"; 
-        this.add(sprite);
-
+        // // add dots
+        // map = new THREE.TextureLoader().load('src/assets/bg_components/dots2.png');
+        // map.minfilter = THREE.LinearMipMapLinearFilter;
+        // map.generateMipmaps = false;
+        // map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
+        // map.minFilter = THREE.LinearFilter;
+        // material = new THREE.SpriteMaterial({ map: map });
+        // sprite = new THREE.Sprite(material);
+        // sprite.scale.set(new_width, ratio * new_width, 1);
+        // sprite.position.z = -1;
+        // sprite.type = "dots"; 
+        // this.add(sprite);
 
         // add start screen
         this.toggleOverlay(width, height, START);
